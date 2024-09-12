@@ -13,6 +13,8 @@ require_relative "s2/message_handler"
 require_relative "s2/connection"
 
 module S2
+  PROTOCOL_VERSION = "0.0.2-beta".freeze
+
   class Error < StandardError; end
   # Your code goes here...
 end
