@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require "fileutils"
+require "active_support/core_ext/string"
+
+FileUtils.mkdir_p("tmp/lib/s2/messages")
+
+Dir
+  .glob("s2-json-schema/messages/*.schema.json")
+  .map do |input_path|
+    message_type = File.basename(input_path, ".schema.json")
+    output_file = "messages/#{message_type.underscore.gsub(".", "_")}.rb"
+    output_path = "tmp/lib/s2/#{output_file}"
+
+    puts "Generating #{message_type} to #{output_path}..."
+
+    `quicktype -s schema #{input_path} -o #{output_path} --namespace S2::Messages`
+
+    output_file
+  end
+  .tap do |output_files|
+    puts "Updating lib/s2/messages.rb..."
+
+    File.open("tmp/lib/s2/messages.rb", "w") do |manifest_file|
+      output_files.each do |output_file|
+        manifest_file.puts "require_relative \"#{output_file}\""
+      end
+    end
+  end

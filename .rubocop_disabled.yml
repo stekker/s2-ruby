@@ -1,0 +1,16 @@
+---
+
+# Contains only disabled cops.
+# Please document (with comments) why a cop is disabled.
+
+RSpec/ExampleLength: # Not practical
+  Enabled: false
+
+RSpec/MultipleExpectations: # Not practical
+  Enabled: false
+
+Style/ClassAndModuleChildren: # Decide what we want
+  Enabled: false
+
+Style/Documentation: # No, just no
+  Enabled: false

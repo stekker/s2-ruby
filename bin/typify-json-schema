@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require "json"
+
+Dir.glob("s2-json-schema/**/*.schema.json").each do |file|
+  json = JSON.parse(File.read(file))
+  json["type"] ||= "object" unless json["enum"]
+  File.write(file, JSON.pretty_generate(json, indent: "    "))
+end
