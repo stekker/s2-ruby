@@ -4,19 +4,19 @@ module S2
 
     on S2::Messages::ReceptionStatus do |message|
       unless message_sent?(message.subject_message_id)
-        # next reply message, status: S2::Messages::ReceptionStatusValues::InvalidContent
         @logger.error("Received ReceptionStatus for unknown message ID #{message.subject_message_id}")
       end
 
       case message.status
       when S2::Messages::ReceptionStatusValues::Ok
-        # no-op
       else
         @logger.error(
           "Received ReceptionStatus with status #{message.status} " \
           "for message ID #{message.subject_message_id}",
         )
       end
+
+      delete_sent_message(message)
     end
 
     def initialize(ws, logger: Rails.logger)
@@ -31,7 +31,6 @@ module S2
 
       message = deserialize_message(message_json)
       handle_message(message)
-      delete_sent_message(message) if message.is_a?(S2::Messages::ReceptionStatus)
     rescue JSON::ParserError
       @logger.error("Received invalid JSON: #{message_json}")
     rescue KeyError => e
@@ -61,11 +60,7 @@ module S2
 
     def reply(message, status:)
       if message.is_a?(S2::Messages::ReceptionStatus)
-        send_message(
-          S2::Messages::ReceptionStatus,
-          status:,
-          subject_message_id: message.subject_message_id,
-        )
+        @logger.error("Cannot reply to ReceptionStatus message")
       else
         send_message(
           S2::Messages::ReceptionStatus,

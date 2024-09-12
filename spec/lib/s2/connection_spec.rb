@@ -47,20 +47,17 @@ describe S2::Connection do
           .with(/Received ReceptionStatus with status INVALID_CONTENT for message ID 123/)
       end
 
-      it "sends an error response when the original message is not known",
-         skip: "sending this error causes an endless loop" do
-           error_response = build(:s2_reception_status, :invalid_content, subject_message_id: "123")
+      it "logs an error when the original message is not known" do
+        logger = Logger.new(nil)
+        connection = described_class.new(ws, logger:)
 
-           logger = Logger.new(nil)
-           connection = described_class.new(ws, logger:)
+        allow(logger).to receive(:error)
 
-           allow(logger).to receive(:error)
+        reception_status = build(:s2_reception_status, :invalid_content, subject_message_id: "123")
+        connection.receive_message(reception_status.to_json)
 
-           reception_status = build(:s2_reception_status, :invalid_content, subject_message_id: "123")
-           connection.receive_message(reception_status.to_json)
-
-           expect(ws).to have_sent_message(error_response.to_json)
-         end
+        expect(logger).to have_received(:error).with("Received ReceptionStatus for unknown message ID 123")
+      end
     end
   end
 
