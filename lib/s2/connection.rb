@@ -6,17 +6,8 @@ module S2
 
     on S2::Messages::ReceptionStatus do |message|
       if message_sent?(message.subject_message_id)
-        case message.status
-        when S2::Messages::ReceptionStatusValues::Ok
-          # no-op
-        else
-          @logger.error(
-            "Received ReceptionStatus with status #{message.status} for " \
-            "unknown message ID #{message.subject_message_id}",
-          )
-        end
-
         delete_sent_message(message)
+        close if message.status == S2::Messages::ReceptionStatusValues::PermanentError
       else
         @logger.error("Received ReceptionStatus for unknown message ID #{message.subject_message_id}")
       end
@@ -71,8 +62,6 @@ module S2
           subject_message_id: message.message_id,
         )
       end
-
-      @ws.close if status == S2::Messages::ReceptionStatusValues::PermanentError
     end
 
     def message_sent?(message_id)

@@ -31,22 +31,6 @@ describe S2::Connection do
     end
 
     context "when the message is a ReceptionStatus" do
-      it "logs an error if the status is not OK" do
-        allow(SecureRandom).to receive(:uuid).and_return("123")
-
-        logger = Logger.new(nil)
-        connection = described_class.new(ws, logger:)
-
-        allow(logger).to receive(:error)
-
-        connection.send_message(S2::Messages::Handshake, { role: S2::Messages::EnergyManagementRole::Cem })
-        reception_status = build(:s2_reception_status, :invalid_content, subject_message_id: "123")
-        connection.receive_message(reception_status.to_json)
-
-        expect(logger).to have_received(:error)
-          .with(/Received ReceptionStatus with status INVALID_CONTENT for unknown message ID 123/)
-      end
-
       it "logs an error when the original message has not been sent" do
         logger = Logger.new(nil)
         connection = described_class.new(ws, logger:)
@@ -84,6 +68,21 @@ describe S2::Connection do
         expect do
           connection.receive_message(reception_status.to_json)
         end.to change { connection.sent_messages.size }.from(1).to(0)
+      end
+
+      it "closes the connection when the status is PermanentError" do
+        allow(SecureRandom).to receive(:uuid).and_return("123")
+
+        logger = Logger.new(nil)
+        connection = described_class.new(ws, logger:)
+        allow(connection).to receive(:close)
+
+        connection.send_message(S2::Messages::Handshake, { role: S2::Messages::EnergyManagementRole::Cem })
+        reception_status = build(:s2_reception_status, :permanent_error, subject_message_id: "123")
+
+        connection.receive_message(reception_status.to_json)
+
+        expect(connection).to have_received(:close)
       end
     end
   end
