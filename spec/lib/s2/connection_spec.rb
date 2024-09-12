@@ -44,10 +44,10 @@ describe S2::Connection do
         connection.receive_message(reception_status.to_json)
 
         expect(logger).to have_received(:error)
-          .with(/Received ReceptionStatus with status INVALID_CONTENT for message ID 123/)
+          .with(/Received ReceptionStatus with status INVALID_CONTENT for unknown message ID 123/)
       end
 
-      it "logs an error when the original message is not known" do
+      it "logs an error when the original message has not been sent" do
         logger = Logger.new(nil)
         connection = described_class.new(ws, logger:)
 
@@ -57,6 +57,33 @@ describe S2::Connection do
         connection.receive_message(reception_status.to_json)
 
         expect(logger).to have_received(:error).with("Received ReceptionStatus for unknown message ID 123")
+      end
+
+      it "does not remove the original message from the sent messages when it was not sent" do
+        allow(SecureRandom).to receive(:uuid).and_return("123")
+
+        logger = Logger.new(nil)
+        connection = described_class.new(ws, logger:)
+
+        reception_status = build(:s2_reception_status, :invalid_content, subject_message_id: "123")
+
+        expect do
+          connection.receive_message(reception_status.to_json)
+        end.not_to change { connection.sent_messages.size }
+      end
+
+      it "removes the original message from the sent messages" do
+        allow(SecureRandom).to receive(:uuid).and_return("123")
+
+        logger = Logger.new(nil)
+        connection = described_class.new(ws, logger:)
+
+        connection.send_message(S2::Messages::Handshake, { role: S2::Messages::EnergyManagementRole::Cem })
+        reception_status = build(:s2_reception_status, :invalid_content, subject_message_id: "123")
+
+        expect do
+          connection.receive_message(reception_status.to_json)
+        end.to change { connection.sent_messages.size }.from(1).to(0)
       end
     end
   end

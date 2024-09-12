@@ -2,22 +2,24 @@ module S2
   class Connection
     include S2::MessageHandler
 
+    attr_reader :sent_messages
+
     on S2::Messages::ReceptionStatus do |message|
-      unless message_sent?(message.subject_message_id)
+      if message_sent?(message.subject_message_id)
+        case message.status
+        when S2::Messages::ReceptionStatusValues::Ok
+          # no-op
+        else
+          @logger.error(
+            "Received ReceptionStatus with status #{message.status} for " \
+            "unknown message ID #{message.subject_message_id}",
+          )
+        end
+
+        delete_sent_message(message)
+      else
         @logger.error("Received ReceptionStatus for unknown message ID #{message.subject_message_id}")
       end
-
-      case message.status
-      when S2::Messages::ReceptionStatusValues::Ok
-        # no-op
-      else
-        @logger.error(
-          "Received ReceptionStatus with status #{message.status} " \
-          "for message ID #{message.subject_message_id}",
-        )
-      end
-
-      delete_sent_message(message)
     end
 
     def initialize(ws, logger: Rails.logger)
