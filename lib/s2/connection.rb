@@ -2,7 +2,7 @@ module S2
   class Connection
     include S2::MessageHandler
 
-    attr_reader :sent_messages
+    attr_reader :state, :sent_messages
 
     on S2::Messages::ReceptionStatus do |message|
       if message_sent?(message.subject_message_id)
@@ -16,8 +16,9 @@ module S2
     def initialize(ws, logger: Rails.logger)
       @ws = ws
       @logger = logger
-      @state = :connected
       @sent_messages = {}
+
+      update_state :connected
     end
 
     def receive_message(message_json)
@@ -62,6 +63,10 @@ module S2
           subject_message_id: message.message_id,
         )
       end
+    end
+
+    def update_state(new_state)
+      @state = new_state
     end
 
     def message_sent?(message_id)
