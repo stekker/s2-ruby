@@ -1,6 +1,7 @@
 module S2
   class Connection
     include S2::MessageHandler
+    include S2::MessageHandlerCallbacks
 
     attr_reader :state, :sent_messages
 
@@ -17,11 +18,18 @@ module S2
       @ws = ws
       @logger = logger
       @sent_messages = {}
+      @rm_id = nil
 
       update_state :connected
     end
 
+    def open(rm_id)
+      @rm_id = rm_id
+      trigger_on_open(rm_id)
+    end
+
     def receive_message(message_json)
+      trigger_before_receive(@rm_id, message_json)
       @logger.info("Received message: #{message_json}")
 
       message = deserialize_message(message_json)
@@ -37,6 +45,7 @@ module S2
       store_sent_message(message) unless message.is_a?(S2::Messages::ReceptionStatus)
       json = message.to_json
       send_raw_message(json)
+      trigger_after_send(@rm_id, json)
 
       @logger.info("Sent message: #{json}")
     end
