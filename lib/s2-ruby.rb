@@ -10,6 +10,7 @@ require_relative "s2/messages/handshake_response"
 require_relative "s2/messages/reception_status"
 require_relative "s2/message_factory"
 require_relative "s2/message_handler"
+require_relative "s2/message_handler_callbacks"
 require_relative "s2/connection"
 
 module S2

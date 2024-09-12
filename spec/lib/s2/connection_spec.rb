@@ -102,4 +102,62 @@ describe S2::Connection do
       expect(ws).to be_closed
     end
   end
+
+  describe "callbacks" do
+    it "calls a callback on opening the connection" do
+      connection_class = Class.new(described_class) do
+        attr_reader :on_open_arg
+
+        on_open do |rm_id|
+          @on_open_arg = rm_id
+        end
+      end
+
+      connection = connection_class.new(ws, logger: Logger.new(nil))
+
+      expect { connection.open("123") }
+        .to change { connection.on_open_arg }.from(nil).to("123")
+    end
+
+    it "calls a callback before handling a message" do
+      connection_class = Class.new(described_class) do
+        attr_reader :before_receive_args
+
+        before_receive do |*args|
+          @before_receive_args = args
+        end
+
+        on S2::Messages::Handshake do |message|
+          # noop
+        end
+      end
+
+      message = build(:s2_handshake)
+      connection = connection_class.new(ws, logger: Logger.new(nil))
+      connection.open("123")
+
+      expect { connection.receive_message(message.to_json) }
+        .to change { connection.before_receive_args }.from(nil).to(["123", message.to_json])
+    end
+
+    it "calls a callback after sending a message" do
+      connection_class = Class.new(described_class) do
+        attr_reader :after_send_args
+
+        after_send do |*args|
+          @after_send_args = args
+        end
+      end
+
+      allow(SecureRandom).to receive(:uuid).and_return("123")
+      message = build(:s2_handshake, message_id: "123")
+      payload = message.as_json.symbolize_keys
+
+      connection = connection_class.new(ws, logger: Logger.new(nil))
+      connection.open("123")
+
+      expect { connection.send_message(S2::Messages::Handshake, payload) }
+        .to change { connection.after_send_args }.from(nil).to(["123", message.to_json])
+    end
+  end
 end
