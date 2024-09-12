@@ -9,6 +9,7 @@ module S2
 
       case message.status
       when S2::Messages::ReceptionStatusValues::Ok
+        # no-op
       else
         @logger.error(
           "Received ReceptionStatus with status #{message.status} " \
