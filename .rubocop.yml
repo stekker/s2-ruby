@@ -216,6 +216,10 @@ Naming/AccessorMethodName:
   Exclude:
   - app/models/**/*.rb
 
+Naming/FileName:
+  Exclude:
+    - lib/s2-ruby.rb
+
 Naming/MethodParameterName:
   MinNameLength: 2
 
