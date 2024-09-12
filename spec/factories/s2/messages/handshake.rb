@@ -4,7 +4,7 @@ FactoryBot.define do
     message_id { "factory_bot" }
     message_type { S2::Messages::MessageType::Handshake }
     rm
-    supported_protocol_versions { ["FRBC"] }
+    supported_protocol_versions { [S2::PROTOCOL_VERSION] }
 
     trait :cem do
       role { S2::Messages::EnergyManagementRole::Cem }
