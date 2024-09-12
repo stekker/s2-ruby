@@ -2,20 +2,14 @@ module S2
   class Connection
     include S2::MessageHandler
 
-    on S2::Messages::ReceptionStatus do |message|
-      unless message_sent?(message.subject_message_id)
-        # next reply message, status: S2::Messages::ReceptionStatusValues::InvalidContent
-        @logger.error("Received ReceptionStatus for unknown message ID #{message.subject_message_id}")
-      end
+    attr_reader :sent_messages
 
-      case message.status
-      when S2::Messages::ReceptionStatusValues::Ok
-        # no-op
+    on S2::Messages::ReceptionStatus do |message|
+      if message_sent?(message.subject_message_id)
+        delete_sent_message(message)
+        close if message.status == S2::Messages::ReceptionStatusValues::PermanentError
       else
-        @logger.error(
-          "Received ReceptionStatus with status #{message.status} " \
-          "for message ID #{message.subject_message_id}",
-        )
+        @logger.error("Received ReceptionStatus for unknown message ID #{message.subject_message_id}")
       end
     end
 
@@ -31,7 +25,6 @@ module S2
 
       message = deserialize_message(message_json)
       handle_message(message)
-      delete_sent_message(message) if message.is_a?(S2::Messages::ReceptionStatus)
     rescue JSON::ParserError
       @logger.error("Received invalid JSON: #{message_json}")
     rescue KeyError => e
@@ -61,11 +54,7 @@ module S2
 
     def reply(message, status:)
       if message.is_a?(S2::Messages::ReceptionStatus)
-        send_message(
-          S2::Messages::ReceptionStatus,
-          status:,
-          subject_message_id: message.subject_message_id,
-        )
+        @logger.error("Cannot reply to ReceptionStatus message")
       else
         send_message(
           S2::Messages::ReceptionStatus,
@@ -73,8 +62,6 @@ module S2
           subject_message_id: message.message_id,
         )
       end
-
-      @ws.close if status == S2::Messages::ReceptionStatusValues::PermanentError
     end
 
     def message_sent?(message_id)
