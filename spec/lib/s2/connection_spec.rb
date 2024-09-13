@@ -159,5 +159,21 @@ describe S2::Connection do
       expect { connection.send_message(S2::Messages::Handshake, payload) }
         .to change { connection.after_send_args }.from(nil).to(["123", message.to_json])
     end
+
+    it "calls a callback on closing the connection" do
+      connection_class = Class.new(described_class) do
+        attr_reader :on_close_arg
+
+        on_close do |rm_id|
+          @on_close_arg = rm_id
+        end
+      end
+
+      connection = connection_class.new(ws, logger: Logger.new(nil))
+      connection.open("123")
+      connection.notify_closed("123")
+
+      expect(connection.on_close_arg).to eq("123")
+    end
   end
 end

@@ -60,6 +60,10 @@ module S2
       @ws.close
     end
 
+    def notify_closed(rm_id)
+      trigger_on_close(rm_id)
+    end
+
     protected
 
     def reply(message, status:)
