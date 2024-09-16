@@ -10,6 +10,7 @@ module S2
         "Handshake",
         "HandshakeResponse",
         "ReceptionStatus",
+        "FRBC.StorageStatus",
       )
 
       EnergyManagementRole = Strict::String.enum("CEM", "RM")
