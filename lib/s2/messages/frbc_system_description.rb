@@ -22,37 +22,7 @@ module S2
     # The range in which the fill_level should remain. It is expected of the CEM to keep the
     # fill_level within this range. When the fill_level is not within this range, the Resource
     # Manager can ignore instructions from the CEM (except during abnormal conditions).
-    class NumberRange < Dry::Struct
 
-      # Number that defines the end of the range
-      attribute :end_of_range, Types::Double
-
-      # Number that defines the start of the range
-      attribute :start_of_range, Types::Double
-
-      def self.from_dynamic!(d)
-        d = Types::Hash[d]
-        new(
-          end_of_range:   d.fetch("end_of_range"),
-          start_of_range: d.fetch("start_of_range"),
-        )
-      end
-
-      def self.from_json!(json)
-        from_dynamic!(JSON.parse(json))
-      end
-
-      def to_dynamic
-        {
-          "end_of_range"   => end_of_range,
-          "start_of_range" => start_of_range,
-        }
-      end
-
-      def to_json(options = nil)
-        JSON.generate(to_dynamic, options)
-      end
-    end
 
     # The power quantity the values refer to
     #
@@ -124,12 +94,12 @@ module S2
 
       # The range of the fill level for which this FRBC.OperationModeElement applies. The start
       # of the NumberRange shall be smaller than the end of the NumberRange.
-      attribute :fill_level_range, NumberRange
+      attribute :fill_level_range, S2::Schemas::NumberRange
 
       # Indicates the change in fill_level per second. The lower_boundary of the NumberRange is
       # associated with an operation_mode_factor of 0, the upper_boundary is associated with an
       # operation_mode_factor of 1.
-      attribute :fill_rate, NumberRange
+      attribute :fill_rate, S2::Schemas::NumberRange
 
       # The power produced or consumed by this operation mode. The start of each PowerRange is
       # associated with an operation_mode_factor of 0, the end is associated with an
@@ -140,15 +110,15 @@ module S2
       # Additional costs per second (e.g. wear, services) associated with this operation mode in
       # the currency defined by the ResourceManagerDetails, excluding the commodity cost. The
       # range is expressing uncertainty and is not linked to the operation_mode_factor.
-      attribute :running_costs, NumberRange.optional
+      attribute :running_costs, S2::Schemas::NumberRange.optional
 
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          fill_level_range: NumberRange.from_dynamic!(d.fetch("fill_level_range")),
-          fill_rate:        NumberRange.from_dynamic!(d.fetch("fill_rate")),
+          fill_level_range: S2::Schemas::NumberRange.from_dynamic!(d.fetch("fill_level_range")),
+          fill_rate:        S2::Schemas::NumberRange.from_dynamic!(d.fetch("fill_rate")),
           power_ranges:     d.fetch("power_ranges").map { |x| PowerRange.from_dynamic!(x) },
-          running_costs:    d["running_costs"] ? NumberRange.from_dynamic!(d["running_costs"]) : nil,
+          running_costs:    d["running_costs"] ? S2::Schemas::NumberRange.from_dynamic!(d["running_costs"]) : nil,
         )
       end
 
@@ -402,7 +372,7 @@ module S2
       # The range in which the fill_level should remain. It is expected of the CEM to keep the
       # fill_level within this range. When the fill_level is not within this range, the Resource
       # Manager can ignore instructions from the CEM (except during abnormal conditions).
-      attribute :fill_level_range, NumberRange
+      attribute :fill_level_range, S2::Schemas::NumberRange
 
       # Indicates whether the Storage could provide a target profile for the fill level through
       # the FRBC.FillLevelTargetProfile.
