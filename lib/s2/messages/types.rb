@@ -19,6 +19,7 @@ module S2
         "FRBC.UsageForecast",
         "FRBC.FillLevelTargetProfile",
         "FRBC.LeakageBehaviour",
+        "FRBC.SystemDescription",
         "FRBC.TimerStatus",
         "FRBC.UsageForecast",
       )

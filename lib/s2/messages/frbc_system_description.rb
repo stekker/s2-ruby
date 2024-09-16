@@ -4,10 +4,6 @@ module S2
       FRBCSystemDescription = "FRBC.SystemDescription"
     end
 
-    module Types
-      MessageType       = Strict::String.enum("FRBC.SystemDescription")
-    end
-
     # The range of the fill level for which this FRBC.OperationModeElement applies. The start
     # of the NumberRange shall be smaller than the end of the NumberRange.
     #
