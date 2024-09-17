@@ -1,13 +1,3 @@
-# This code may look unusually verbose for Ruby (and it is), but
-# it performs some subtle and complex validation of JSON data.
-#
-# To parse this JSON, add 'dry-struct' and 'dry-types' gems, then do:
-#
-#   handshake = Handshake.from_json! "{…}"
-#   puts handshake.supported_protocol_versions&.first
-#
-# If from_json! succeeds, the value returned matches the schema.
-
 module S2
   module Messages
     module MessageType

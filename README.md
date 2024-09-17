@@ -1,8 +1,21 @@
 # S2
 
-TODO: Delete this and the text below, and describe your gem
+## Requirements
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/s2`. To experiment with that code, run `bin/console` for an interactive prompt.
+```bash
+brew install quicktype
+```
+
+## Code generation
+
+To generate boilerplate code for the S2 library, run the following command:
+```bash
+bin/gen-types
+```
+
+Move these to the `lib/s2` directory and adjust them according to the existing examples.
+
+```bash
 
 ## Installation
 
