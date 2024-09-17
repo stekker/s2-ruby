@@ -14,6 +14,14 @@ module S2
       end
     end
 
+    class << self
+      def open(ws, context)
+        new(ws).tap do |connection|
+          connection.open(context)
+        end
+      end
+    end
+
     def initialize(ws, logger: Rails.logger)
       @ws = ws
       @logger = logger
@@ -24,6 +32,8 @@ module S2
     end
 
     def open(context)
+      @logger.info("Session opened for '#{context}'")
+
       @context = context
       trigger_on_open(context)
     end
@@ -46,18 +56,19 @@ module S2
       json = message.to_json
       send_raw_message(json)
       trigger_after_send(@context, json)
-
-      @logger.info("Sent message: #{json}")
     end
 
     def send_raw_message(data)
-      @logger.info("Send raw message: #{data}")
-      @ws.send(data)
+      @ws.write(data)
+
+      @logger.info("Sent message: #{data}")
     end
 
     def close(message: nil)
       send_raw_message(message) if message
       @ws.close
+
+      @logger.info("Session closed for '#{@context}'")
     end
 
     def notify_closed(rm_id)
