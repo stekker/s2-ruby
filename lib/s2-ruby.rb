@@ -6,8 +6,8 @@ require "active_support/all"
 require_relative "s2/version"
 
 require_relative "s2/messages/types"
-Dir[File.join(__dir__, 's2/schemas', '*.rb')].each { |file| require_relative file }
-Dir[File.join(__dir__, 's2/messages', '*.rb')].each { |file| require_relative file }
+Dir[File.join(__dir__, "s2/schemas", "*.rb")].each { |file| require_relative file }
+Dir[File.join(__dir__, "s2/messages", "*.rb")].each { |file| require_relative file }
 
 require_relative "s2/message_factory"
 require_relative "s2/message_handler"

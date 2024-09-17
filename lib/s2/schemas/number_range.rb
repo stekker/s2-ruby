@@ -1,10 +1,8 @@
 module S2
   module Schemas
-
     # The fill level range for which this FRBC.LeakageBehaviourElement applies. The start of
     # the range must be less than the end of the range.
     class NumberRange < Dry::Struct
-
       # Number that defines the end of the range
       attribute :end_of_range, S2::Messages::Types::Double
 
