@@ -56,13 +56,12 @@ module S2
       json = message.to_json
       send_raw_message(json)
       trigger_after_send(@context, json)
-
-      @logger.info("Sent message: #{json}")
     end
 
     def send_raw_message(data)
-      @logger.info("Send raw message: #{data}")
       @ws.write(data)
+
+      @logger.info("Sent message: #{data}")
     end
 
     def close(message: nil)
