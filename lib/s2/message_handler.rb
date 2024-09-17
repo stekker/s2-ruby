@@ -3,22 +3,30 @@ module S2
     extend ActiveSupport::Concern
 
     included do
-      class_attribute :handlers, default: {}
+      class_attribute :message_handlers, instance_writer: false, default: {}
     end
 
     class_methods do
-      def on(message_type, &handler)
-        if handlers.has_key?(message_type)
-          raise ArgumentError, "A handler for message class '#{message_type}' already exists"
+      def on(message_class, &handler)
+        if find_handler(message_class)
+          raise ArgumentError, "A handler for message class '#{message_class}' is already defined"
         end
 
-        handlers[message_type] = handler
+        self.message_handlers = message_handlers.merge(key(message_class) => handler)
+      end
+
+      def key(message_class)
+        message_class
+      end
+
+      def find_handler(message_class)
+        message_handlers[key(message_class)]
       end
     end
 
     def handle_message(message)
-      handler = self.class.handlers[message.class]
-      raise ArgumentError, "No handler found for message class '#{message.class}'" if handler.nil?
+      handler = self.class.find_handler(message.class)
+      raise ArgumentError, "No handler defined for message class '#{message.class}'" if handler.nil?
 
       instance_exec(message, &handler)
     end
