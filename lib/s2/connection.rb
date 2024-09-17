@@ -14,6 +14,14 @@ module S2
       end
     end
 
+    class << self
+      def open(ws, context)
+        new(ws).tap do |connection|
+          connection.open(context)
+        end
+      end
+    end
+
     def initialize(ws, logger: Rails.logger)
       @ws = ws
       @logger = logger
