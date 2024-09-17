@@ -11,7 +11,7 @@ class MockWebSocketClient
     instance_variable_set("@on#{type}", blk)
   end
 
-  def send(message)
+  def write(message)
     @sent_messages << message
   end
 

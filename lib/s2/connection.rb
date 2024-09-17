@@ -52,7 +52,7 @@ module S2
 
     def send_raw_message(data)
       @logger.info("Send raw message: #{data}")
-      @ws.send(data)
+      @ws.write(data)
     end
 
     def close(message: nil)
