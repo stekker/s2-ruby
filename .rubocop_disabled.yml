@@ -14,3 +14,6 @@ Style/ClassAndModuleChildren: # Decide what we want
 
 Style/Documentation: # No, just no
   Enabled: false
+
+Naming/MethodParameterName: # single letter params are fine
+  Enabled: false
