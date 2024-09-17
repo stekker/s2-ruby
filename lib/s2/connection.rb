@@ -32,6 +32,8 @@ module S2
     end
 
     def open(context)
+      @logger.info("Session opened for '#{context}'")
+
       @context = context
       trigger_on_open(context)
     end
@@ -66,6 +68,8 @@ module S2
     def close(message: nil)
       send_raw_message(message) if message
       @ws.close
+
+      @logger.info("Session closed for '#{@context}'")
     end
 
     def notify_closed(rm_id)
