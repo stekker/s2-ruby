@@ -1,8 +1,9 @@
 # S2 Ruby
 
-[![Tests](https://github.com/stekker/s2-ruby/actions/workflows/ci.yml/badge.svg)](https://github.com/stekker/s2-ruby/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.txt)
 [![Ruby](https://img.shields.io/badge/Ruby-3.3+-red.svg)](s2-ruby.gemspec)
+[![Tests](https://github.com/stekker/s2-ruby/actions/workflows/ci.yml/badge.svg)](https://github.com/stekker/s2-ruby/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/stekker/s2-ruby/badge.svg?branch=main)](https://coveralls.io/github/stekker/s2-ruby?branch=main)
 
 Ruby implementation of the [S2 standard](https://s2standard.org/) (EN 50491-12-2) for smart grid energy flexibility.
 
