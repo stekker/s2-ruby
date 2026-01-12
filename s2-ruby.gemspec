@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
                      "and resource managers (RM) for demand-response and flexible power control."
   spec.homepage = "https://github.com/stekker/s2-ruby"
   spec.license = "Apache-2.0"
-  spec.required_ruby_version = ">= 3.3"
+  spec.required_ruby_version = ">= 3.3" # rubocop:disable Gemspec/RequiredRubyVersion
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/stekker/s2-ruby"

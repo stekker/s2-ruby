@@ -118,14 +118,14 @@ json = handshake.to_json
 ```
 ┌─────────────────────┐       WebSocket       ┌─────────────────┐
 │   Your Application  │◄─────────────────────►│   CEM Server    │
-│  (Resource Manager) │                       │                 │
+│  (Resource Manager) │ ← Your custom logic   │                 │
 └──────────┬──────────┘                       └─────────────────┘
            │
            ▼
 ┌─────────────────────┐
 │ S2::Connection      │ ← Manages WebSocket lifecycle
 │ S2::Session         │ ← Handles protocol state
-│ S2::MessageHandler  │ ← Your custom logic
+│ S2::MessageHandler  │
 └─────────────────────┘
 ```
 
