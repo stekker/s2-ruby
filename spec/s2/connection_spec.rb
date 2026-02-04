@@ -35,6 +35,38 @@ describe S2::Connection, :async do
       expect(sleep_durations).to eq([5, 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 3600, 3600, 3600, 3600])
     end
 
+    it "passes headers to the websocket client" do
+      ws = FakeWebSocket.new
+      received_headers = nil
+
+      allow(Async::WebSocket::Client).to receive(:connect) do |_endpoint, headers:, &block|
+        received_headers = headers
+        block.call(ws)
+      end
+
+      resource_id = SecureRandom.uuid
+      ws_url = "ws://example.com/#{resource_id}"
+      headers = { "authorization" => "Basic dXNlcjpwYXNz" }
+
+      connection = described_class.new(
+        resource_id:,
+        task: Async::Task.current,
+        ws_url:,
+        headers:,
+      )
+
+      task = Async do
+        connection.connect
+      end
+
+      Async::Task.current.sleep 0.1
+
+      connection.disconnect
+      task.stop
+
+      expect(received_headers).to eq(headers)
+    end
+
     it "reuses the same endpoint across reconnection attempts" do
       ws = FakeWebSocket.new
       connection_attempts = []
