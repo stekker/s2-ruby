@@ -9,13 +9,14 @@ module S2
 
     attr_reader :connected_at, :status
 
-    def initialize(resource_id:, task:, ws_url:)
+    def initialize(resource_id:, task:, ws_url:, headers: {})
       @connected_at = nil
       @queue = nil
       @resource_id = resource_id
       @session = nil
       @task = task
       @ws_url = ws_url
+      @headers = headers
       @status = :initialized
       @stopping = false
       @backoff = INITIAL_BACKOFF
@@ -81,7 +82,7 @@ module S2
     def connect_websocket(&)
       @status = :connecting
 
-      Async::WebSocket::Client.connect(@endpoint) do |ws|
+      Async::WebSocket::Client.connect(@endpoint, headers: @headers) do |ws|
         ActiveSupport::Notifications.instrument(
           "connected.session.s2",
           resource_id: @resource_id,
