@@ -32,7 +32,13 @@ module S2
           connect_and_run
           @backoff = INITIAL_BACKOFF
         rescue StandardError => e
-          ActiveSupport::Notifications.instrument("connection_errored.session.s2", exception: e) unless @stopping
+          unless @stopping
+            ActiveSupport::Notifications.instrument(
+              "connection_errored.session.s2",
+              resource_id: @resource_id,
+              exception: e,
+            )
+          end
         ensure
           break if @stopping
 
