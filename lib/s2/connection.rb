@@ -9,7 +9,7 @@ module S2
 
     attr_reader :connected_at, :status
 
-    def initialize(resource_id:, task:, ws_url:, headers: {})
+    def initialize(resource_id:, ws_url:, task: nil, headers: {})
       @connected_at = nil
       @queue = nil
       @resource_id = resource_id
@@ -27,6 +27,8 @@ module S2
     end
 
     def connect
+      @task ||= Async::Task.current
+
       until @stopping
         begin
           connect_and_run
@@ -61,6 +63,7 @@ module S2
         # ignore
       end
 
+      @task&.stop
       @status = :disconnected
     end
 

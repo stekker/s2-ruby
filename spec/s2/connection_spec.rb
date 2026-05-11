@@ -15,11 +15,7 @@ describe S2::Connection, :async do
       resource_id = SecureRandom.uuid
       ws_url = "ws://example.com/#{resource_id}"
 
-      connection = described_class.new(
-        resource_id:,
-        task: Async::Task.current,
-        ws_url:,
-      )
+      connection = described_class.new(resource_id:, ws_url:)
 
       allow(connection).to receive(:sleep) { |duration| sleep_durations << duration }
 
@@ -48,12 +44,7 @@ describe S2::Connection, :async do
       ws_url = "ws://example.com/#{resource_id}"
       headers = { "authorization" => "Basic dXNlcjpwYXNz" }
 
-      connection = described_class.new(
-        resource_id:,
-        task: Async::Task.current,
-        ws_url:,
-        headers:,
-      )
+      connection = described_class.new(resource_id:, ws_url:, headers:)
 
       task = Async do
         connection.connect
@@ -81,11 +72,7 @@ describe S2::Connection, :async do
       resource_id = SecureRandom.uuid
       ws_url = "ws://example.com/#{resource_id}"
 
-      connection = described_class.new(
-        resource_id:,
-        task: Async::Task.current,
-        ws_url:,
-      )
+      connection = described_class.new(resource_id:, ws_url:)
 
       allow(connection).to receive(:sleep)
 
@@ -100,6 +87,25 @@ describe S2::Connection, :async do
 
       expect(connection_attempts.size).to be >= 3
       expect(connection_attempts.uniq.size).to eq(1)
+    end
+
+    it "stops its task when disconnected, even while sleeping between reconnect attempts" do
+      allow(Async::WebSocket::Client).to receive(:connect).and_raise(Errno::ECONNREFUSED)
+
+      resource_id = SecureRandom.uuid
+      ws_url = "ws://example.com/#{resource_id}"
+
+      connection = described_class.new(resource_id:, ws_url:)
+
+      task = Async { connection.connect }
+      Async::Task.current.sleep 0.1
+
+      expect(task).not_to be_finished
+
+      connection.disconnect
+
+      Async::Task.current.sleep 0.1
+      expect(task).to be_finished
     end
 
     it "instruments connection_errored with the resource_id and exception" do
@@ -122,7 +128,6 @@ describe S2::Connection, :async do
 
       connection = described_class.new(
         resource_id:,
-        task: Async::Task.current,
         ws_url: "ws://example.com/#{resource_id}",
       )
       allow(connection).to receive(:sleep)
