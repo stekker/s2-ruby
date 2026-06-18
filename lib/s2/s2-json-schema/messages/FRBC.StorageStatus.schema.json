@@ -11,11 +11,6 @@
             "$ref": "../schemas/ID.schema.json",
             "description": "ID of this message"
         },
-        "measurement_timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when StorageStatus was measured."
-        },
         "present_fill_level": {
             "type": "number",
             "description": "Present fill level of the Storage"
@@ -24,7 +19,6 @@
     "required": [
         "message_type",
         "message_id",
-        "measurement_timestamp",
         "present_fill_level"
     ],
     "additionalProperties": false,

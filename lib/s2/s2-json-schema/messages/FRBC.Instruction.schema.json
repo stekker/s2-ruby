@@ -32,10 +32,6 @@
             "format": "date-time",
             "description": "Indicates the moment the execution of the instruction shall start. When the specified execution time is in the past, execution must start as soon as possible."
         },
-        "duration": {
-            "$ref": "../schemas/Duration.schema.json",
-            "description": "The duration of the instruction (deviation from the S2 protocol)."
-        },
         "abnormal_condition": {
             "type": "boolean",
             "description": "Indicates if this is an instruction during an abnormal condition."
