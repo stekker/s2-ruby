@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require "json"
+
+Dir.glob("lib/s2/s2-json-schema/**/*.schema.json").each do |file|
+  json = JSON.parse(File.read(file))
+  json["type"] ||= "object" unless json["enum"]
+  File.write(file, JSON.pretty_generate(json, indent: "    "))
+end
+
+`npx -y quicktype -s schema lib/s2/s2-json-schema/{schemas,messages}/*.schema.json -l ruby --namespace S2::Messages -o lib/s2/messages.rb`

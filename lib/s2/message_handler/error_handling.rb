@@ -18,8 +18,8 @@ module S2::MessageHandler::ErrorHandling
     rescue_from S2::MessageFactory::MissingMessageType,
                 S2::MessageFactory::InvalidMessagePayload,
                 S2::MessageFactory::UnsupportedMessageType do |error|
-                  reply to: error.message_id, status: :invalid_message, diagnostic_label: error.message
-                end
+      reply to: error.message_id, status: :invalid_message, diagnostic_label: error.message
+    end
 
     rescue_from S2::MessageHandler::Dispatching::HandlerNotFound do |_error|
       reply to: nil,

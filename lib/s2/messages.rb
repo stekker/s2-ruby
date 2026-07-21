@@ -97,7 +97,7 @@
 #   puts frbc_leakage_behaviour.elements.first.fill_level_range.end_of_range
 #
 #   frbc_storage_status = FRBCStorageStatus.from_json! "{…}"
-#   puts frbc_storage_status.measurement_timestamp
+#   puts frbc_storage_status.message_id
 #
 #   frbc_system_description = FRBCSystemDescription.from_json! "{…}"
 #   puts frbc_system_description.storage.fill_level_range.end_of_range
@@ -140,9 +140,9 @@
 #
 # If from_json! succeeds, the value returned matches the schema.
 
-require "json"
-require "dry-types"
-require "dry-struct"
+require 'json'
+require 'dry-types'
+require 'dry-struct'
 
 module S2
   module Messages
@@ -154,11 +154,9 @@ module S2
       Hash                                  = Strict::Hash
       String                                = Strict::String
       Double                                = Strict::Float | Strict::Integer
-      CommodityQuantity                     = Strict::String.enum("ELECTRIC.POWER.3_PHASE_SYMMETRIC",
-                                                                  "ELECTRIC.POWER.L1", "ELECTRIC.POWER.L2", "ELECTRIC.POWER.L3", "HEAT.FLOW_RATE", "HEAT.TEMPERATURE", "HEAT.THERMAL_POWER", "HYDROGEN.FLOW_RATE", "NATURAL_GAS.FLOW_RATE", "OIL.FLOW_RATE")
+      CommodityQuantity                     = Strict::String.enum("ELECTRIC.POWER.3_PHASE_SYMMETRIC", "ELECTRIC.POWER.L1", "ELECTRIC.POWER.L2", "ELECTRIC.POWER.L3", "HEAT.FLOW_RATE", "HEAT.TEMPERATURE", "HEAT.THERMAL_POWER", "HYDROGEN.FLOW_RATE", "NATURAL_GAS.FLOW_RATE", "OIL.FLOW_RATE")
       Commodity                             = Strict::String.enum("ELECTRICITY", "GAS", "HEAT", "OIL")
-      RoleType                              = Strict::String.enum("ENERGY_CONSUMER", "ENERGY_PRODUCER",
-                                                                  "ENERGY_STORAGE")
+      RoleType                              = Strict::String.enum("ENERGY_CONSUMER", "ENERGY_PRODUCER", "ENERGY_STORAGE")
       FRBCActuatorStatusMessageType         = Strict::String.enum("FRBC.ActuatorStatus")
       FRBCFillLevelTargetProfileMessageType = Strict::String.enum("FRBC.FillLevelTargetProfile")
       FRBCInstructionMessageType            = Strict::String.enum("FRBC.Instruction")
@@ -171,21 +169,16 @@ module S2
       EnergyManagementRole                  = Strict::String.enum("CEM", "RM")
       HandshakeResponseMessageType          = Strict::String.enum("HandshakeResponse")
       InstructionStatusUpdateMessageType    = Strict::String.enum("InstructionStatusUpdate")
-      InstructionStatus                     = Strict::String.enum("ABORTED", "ACCEPTED", "NEW", "REJECTED", "REVOKED",
-                                                                  "STARTED", "SUCCEEDED")
+      InstructionStatus                     = Strict::String.enum("ABORTED", "ACCEPTED", "NEW", "REJECTED", "REVOKED", "STARTED", "SUCCEEDED")
       PowerForecastMessageType              = Strict::String.enum("PowerForecast")
       PowerMeasurementMessageType           = Strict::String.enum("PowerMeasurement")
       ReceptionStatusMessageType            = Strict::String.enum("ReceptionStatus")
-      ReceptionStatusValues                 = Strict::String.enum("INVALID_CONTENT", "INVALID_DATA", "INVALID_MESSAGE",
-                                                                  "OK", "PERMANENT_ERROR", "TEMPORARY_ERROR")
-      ControlType                           = Strict::String.enum("DEMAND_DRIVEN_BASED_CONTROL",
-                                                                  "FILL_RATE_BASED_CONTROL", "NO_SELECTION", "NOT_CONTROLABLE", "OPERATION_MODE_BASED_CONTROL", "POWER_ENVELOPE_BASED_CONTROL", "POWER_PROFILE_BASED_CONTROL")
-      Currency                              = Strict::String.enum("AED", "ANG", "AUD", "CHE", "CHF", "CHW", "EUR",
-                                                                  "GBP", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NIO", "NAD", "NGN", "NOK", "NPR", "NZD", "OMR", "PHP", "PAB", "PEN", "PGK", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SSP", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD", "STD", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UZS", "VEF", "VND", "VUV", "WST", "XAG", "XAU", "XBA", "XBB", "XBC", "XBD", "XCD", "XOF", "XPD", "XPF", "XPT", "XSU", "XTS", "XUA", "XXX", "YER", "ZAR", "ZMW", "ZWL")
+      ReceptionStatusValues                 = Strict::String.enum("INVALID_CONTENT", "INVALID_DATA", "INVALID_MESSAGE", "OK", "PERMANENT_ERROR", "TEMPORARY_ERROR")
+      ControlType                           = Strict::String.enum("DEMAND_DRIVEN_BASED_CONTROL", "FILL_RATE_BASED_CONTROL", "NO_SELECTION", "NOT_CONTROLABLE", "OPERATION_MODE_BASED_CONTROL", "POWER_ENVELOPE_BASED_CONTROL", "POWER_PROFILE_BASED_CONTROL")
+      Currency                              = Strict::String.enum("AED", "ANG", "AUD", "CHE", "CHF", "CHW", "EUR", "GBP", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NIO", "NAD", "NGN", "NOK", "NPR", "NZD", "OMR", "PHP", "PAB", "PEN", "PGK", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SSP", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD", "STD", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UZS", "VEF", "VND", "VUV", "WST", "XAG", "XAU", "XBA", "XBB", "XBC", "XBD", "XCD", "XOF", "XPD", "XPF", "XPT", "XSU", "XTS", "XUA", "XXX", "YER", "ZAR", "ZMW", "ZWL")
       ResourceManagerDetailsMessageType     = Strict::String.enum("ResourceManagerDetails")
       RevokeObjectMessageType               = Strict::String.enum("RevokeObject")
-      RevokableObjects                      = Strict::String.enum("DDBC.Instruction", "DDBC.SystemDescription",
-                                                                  "FRBC.Instruction", "FRBC.SystemDescription", "OMBC.Instruction", "OMBC.SystemDescription", "PEBC.EnergyConstraint", "PEBC.Instruction", "PEBC.PowerConstraints", "PPBC.EndInterruptionInstruction", "PPBC.PowerProfileDefinition", "PPBC.ScheduleInstruction", "PPBC.StartInterruptionInstruction")
+      RevokableObjects                      = Strict::String.enum("DDBC.Instruction", "DDBC.SystemDescription", "FRBC.Instruction", "FRBC.SystemDescription", "OMBC.Instruction", "OMBC.SystemDescription", "PEBC.EnergyConstraint", "PEBC.Instruction", "PEBC.PowerConstraints", "PPBC.EndInterruptionInstruction", "PPBC.PowerProfileDefinition", "PPBC.ScheduleInstruction", "PPBC.StartInterruptionInstruction")
       SelectControlTypeMessageType          = Strict::String.enum("SelectControlType")
       SessionRequestMessageType             = Strict::String.enum("SessionRequest")
       SessionRequestType                    = Strict::String.enum("RECONNECT", "TERMINATE")
@@ -213,6 +206,7 @@ module S2
     # fill_level within this range. When the fill_level is not within this range, the Resource
     # Manager can ignore instructions from the CEM (except during abnormal conditions).
     class FillLevelRangeClass < Dry::Struct
+
       # Number that defines the end of the range
       attribute :end_of_range, Types::Double
 
@@ -222,7 +216,7 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          end_of_range: d.fetch("end_of_range"),
+          end_of_range:   d.fetch("end_of_range"),
           start_of_range: d.fetch("start_of_range"),
         )
       end
@@ -233,7 +227,7 @@ module S2
 
       def to_dynamic
         {
-          "end_of_range" => end_of_range,
+          "end_of_range"   => end_of_range,
           "start_of_range" => start_of_range,
         }
       end
@@ -262,19 +256,20 @@ module S2
     #
     # The power quantity the value refers to
     module CommodityQuantity
-      ElectricPower3_PhaseSymmetric = "ELECTRIC.POWER.3_PHASE_SYMMETRIC".freeze
-      ElectricPowerL1               = "ELECTRIC.POWER.L1".freeze
-      ElectricPowerL2               = "ELECTRIC.POWER.L2".freeze
-      ElectricPowerL3               = "ELECTRIC.POWER.L3".freeze
-      HeatFlowRate                  = "HEAT.FLOW_RATE".freeze
-      HeatTemperature               = "HEAT.TEMPERATURE".freeze
-      HeatThermalPower              = "HEAT.THERMAL_POWER".freeze
-      HydrogenFlowRate              = "HYDROGEN.FLOW_RATE".freeze
-      NaturalGasFlowRate            = "NATURAL_GAS.FLOW_RATE".freeze
-      OilFlowRate                   = "OIL.FLOW_RATE".freeze
+      ElectricPower3_PhaseSymmetric = "ELECTRIC.POWER.3_PHASE_SYMMETRIC"
+      ElectricPowerL1               = "ELECTRIC.POWER.L1"
+      ElectricPowerL2               = "ELECTRIC.POWER.L2"
+      ElectricPowerL3               = "ELECTRIC.POWER.L3"
+      HeatFlowRate                  = "HEAT.FLOW_RATE"
+      HeatTemperature               = "HEAT.TEMPERATURE"
+      HeatThermalPower              = "HEAT.THERMAL_POWER"
+      HydrogenFlowRate              = "HYDROGEN.FLOW_RATE"
+      NaturalGasFlowRate            = "NATURAL_GAS.FLOW_RATE"
+      OilFlowRate                   = "OIL.FLOW_RATE"
     end
 
     class PowerRangeElement < Dry::Struct
+
       # The power quantity the values refer to
       attribute :commodity_quantity, Types::CommodityQuantity
 
@@ -288,8 +283,8 @@ module S2
         d = Types::Hash[d]
         new(
           commodity_quantity: d.fetch("commodity_quantity"),
-          end_of_range: d.fetch("end_of_range"),
-          start_of_range: d.fetch("start_of_range"),
+          end_of_range:       d.fetch("end_of_range"),
+          start_of_range:     d.fetch("start_of_range"),
         )
       end
 
@@ -300,8 +295,8 @@ module S2
       def to_dynamic
         {
           "commodity_quantity" => commodity_quantity,
-          "end_of_range" => end_of_range,
-          "start_of_range" => start_of_range,
+          "end_of_range"       => end_of_range,
+          "start_of_range"     => start_of_range,
         }
       end
 
@@ -311,6 +306,7 @@ module S2
     end
 
     class ElementElement < Dry::Struct
+
       # The range of the fill level for which this FRBC.OperationModeElement applies. The start
       # of the NumberRange shall be smaller than the end of the NumberRange.
       attribute :fill_level_range, FillLevelRangeClass
@@ -335,9 +331,9 @@ module S2
         d = Types::Hash[d]
         new(
           fill_level_range: FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
-          fill_rate: FillLevelRangeClass.from_dynamic!(d.fetch("fill_rate")),
-          power_ranges: d.fetch("power_ranges").map { |x| PowerRangeElement.from_dynamic!(x) },
-          running_costs: d["running_costs"] ? FillLevelRangeClass.from_dynamic!(d["running_costs"]) : nil,
+          fill_rate:        FillLevelRangeClass.from_dynamic!(d.fetch("fill_rate")),
+          power_ranges:     d.fetch("power_ranges").map { |x| PowerRangeElement.from_dynamic!(x) },
+          running_costs:    d["running_costs"] ? FillLevelRangeClass.from_dynamic!(d["running_costs"]) : nil,
         )
       end
 
@@ -348,9 +344,9 @@ module S2
       def to_dynamic
         {
           "fill_level_range" => fill_level_range.to_dynamic,
-          "fill_rate" => fill_rate.to_dynamic,
-          "power_ranges" => power_ranges.map(&:to_dynamic),
-          "running_costs" => running_costs&.to_dynamic,
+          "fill_rate"        => fill_rate.to_dynamic,
+          "power_ranges"     => power_ranges.map { |x| x.to_dynamic },
+          "running_costs"    => running_costs&.to_dynamic,
         }
       end
 
@@ -360,6 +356,7 @@ module S2
     end
 
     class OperationModeElement < Dry::Struct
+
       # Indicates if this FRBC.OperationMode may only be used during an abnormal condition
       attribute :abnormal_condition_only, Types::Bool
 
@@ -380,9 +377,9 @@ module S2
         d = Types::Hash[d]
         new(
           abnormal_condition_only: d.fetch("abnormal_condition_only"),
-          diagnostic_label: d["diagnostic_label"],
-          elements: d.fetch("elements").map { |x| ElementElement.from_dynamic!(x) },
-          id: d.fetch("id"),
+          diagnostic_label:        d["diagnostic_label"],
+          elements:                d.fetch("elements").map { |x| ElementElement.from_dynamic!(x) },
+          id:                      d.fetch("id"),
         )
       end
 
@@ -393,9 +390,9 @@ module S2
       def to_dynamic
         {
           "abnormal_condition_only" => abnormal_condition_only,
-          "diagnostic_label" => diagnostic_label,
-          "elements" => elements.map(&:to_dynamic),
-          "id" => id,
+          "diagnostic_label"        => diagnostic_label,
+          "elements"                => elements.map { |x| x.to_dynamic },
+          "id"                      => id,
         }
       end
 
@@ -411,13 +408,14 @@ module S2
     #
     # Commodity the role refers to.
     module Commodity
-      Electricity = "ELECTRICITY".freeze
-      Gas         = "GAS".freeze
-      Heat        = "HEAT".freeze
-      Oil         = "OIL".freeze
+      Electricity = "ELECTRICITY"
+      Gas         = "GAS"
+      Heat        = "HEAT"
+      Oil         = "OIL"
     end
 
     class TimerElement < Dry::Struct
+
       # Human readable name/description of the Timer. This element is only intended for
       # diagnostic purposes and not for HMI applications.
       attribute :diagnostic_label, Types::String.optional
@@ -433,8 +431,8 @@ module S2
         d = Types::Hash[d]
         new(
           diagnostic_label: d["diagnostic_label"],
-          duration: d.fetch("duration"),
-          id: d.fetch("id"),
+          duration:         d.fetch("duration"),
+          id:               d.fetch("id"),
         )
       end
 
@@ -445,8 +443,8 @@ module S2
       def to_dynamic
         {
           "diagnostic_label" => diagnostic_label,
-          "duration" => duration,
-          "id" => id,
+          "duration"         => duration,
+          "id"               => id,
         }
       end
 
@@ -456,6 +454,7 @@ module S2
     end
 
     class TransitionElement < Dry::Struct
+
       # Indicates if this Transition may only be used during an abnormal condition (see Clause )
       attribute :abnormal_condition_only, Types::Bool
 
@@ -489,13 +488,13 @@ module S2
         d = Types::Hash[d]
         new(
           abnormal_condition_only: d.fetch("abnormal_condition_only"),
-          blocking_timers: d.fetch("blocking_timers"),
-          from: d.fetch("from"),
-          id: d.fetch("id"),
-          start_timers: d.fetch("start_timers"),
-          to: d.fetch("to"),
-          transition_costs: d["transition_costs"],
-          transition_duration: d["transition_duration"],
+          blocking_timers:         d.fetch("blocking_timers"),
+          from:                    d.fetch("from"),
+          id:                      d.fetch("id"),
+          start_timers:            d.fetch("start_timers"),
+          to:                      d.fetch("to"),
+          transition_costs:        d["transition_costs"],
+          transition_duration:     d["transition_duration"],
         )
       end
 
@@ -506,13 +505,13 @@ module S2
       def to_dynamic
         {
           "abnormal_condition_only" => abnormal_condition_only,
-          "blocking_timers" => blocking_timers,
-          "from" => from,
-          "id" => id,
-          "start_timers" => start_timers,
-          "to" => to,
-          "transition_costs" => transition_costs,
-          "transition_duration" => transition_duration,
+          "blocking_timers"         => blocking_timers,
+          "from"                    => from,
+          "id"                      => id,
+          "start_timers"            => start_timers,
+          "to"                      => to,
+          "transition_costs"        => transition_costs,
+          "transition_duration"     => transition_duration,
         }
       end
 
@@ -522,6 +521,7 @@ module S2
     end
 
     class FRBCActuatorDescription < Dry::Struct
+
       # Human readable name/description for the actuator. This element is only intended for
       # diagnostic purposes and not for HMI applications.
       attribute :diagnostic_label, Types::String.optional
@@ -545,12 +545,12 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          diagnostic_label: d["diagnostic_label"],
-          id: d.fetch("id"),
-          operation_modes: d.fetch("operation_modes").map { |x| OperationModeElement.from_dynamic!(x) },
+          diagnostic_label:      d["diagnostic_label"],
+          id:                    d.fetch("id"),
+          operation_modes:       d.fetch("operation_modes").map { |x| OperationModeElement.from_dynamic!(x) },
           supported_commodities: d.fetch("supported_commodities"),
-          timers: d.fetch("timers").map { |x| TimerElement.from_dynamic!(x) },
-          transitions: d.fetch("transitions").map { |x| TransitionElement.from_dynamic!(x) },
+          timers:                d.fetch("timers").map { |x| TimerElement.from_dynamic!(x) },
+          transitions:           d.fetch("transitions").map { |x| TransitionElement.from_dynamic!(x) },
         )
       end
 
@@ -560,12 +560,12 @@ module S2
 
       def to_dynamic
         {
-          "diagnostic_label" => diagnostic_label,
-          "id" => id,
-          "operation_modes" => operation_modes.map(&:to_dynamic),
+          "diagnostic_label"      => diagnostic_label,
+          "id"                    => id,
+          "operation_modes"       => operation_modes.map { |x| x.to_dynamic },
           "supported_commodities" => supported_commodities,
-          "timers" => timers.map(&:to_dynamic),
-          "transitions" => transitions.map(&:to_dynamic),
+          "timers"                => timers.map { |x| x.to_dynamic },
+          "transitions"           => transitions.map { |x| x.to_dynamic },
         }
       end
 
@@ -575,6 +575,7 @@ module S2
     end
 
     class FRBCFillLevelTargetProfileElement < Dry::Struct
+
       # The duration of the element.
       attribute :duration, Types::Integer
 
@@ -586,7 +587,7 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          duration: d.fetch("duration"),
+          duration:         d.fetch("duration"),
           fill_level_range: FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
         )
       end
@@ -597,7 +598,7 @@ module S2
 
       def to_dynamic
         {
-          "duration" => duration,
+          "duration"         => duration,
           "fill_level_range" => fill_level_range.to_dynamic,
         }
       end
@@ -608,6 +609,7 @@ module S2
     end
 
     class FRBCLeakageBehaviourElement < Dry::Struct
+
       # The fill level range for which this FRBC.LeakageBehaviourElement applies. The start of
       # the range must be less than the end of the range.
       attribute :fill_level_range, FillLevelRangeClass
@@ -621,7 +623,7 @@ module S2
         d = Types::Hash[d]
         new(
           fill_level_range: FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
-          leakage_rate: d.fetch("leakage_rate"),
+          leakage_rate:     d.fetch("leakage_rate"),
         )
       end
 
@@ -632,7 +634,7 @@ module S2
       def to_dynamic
         {
           "fill_level_range" => fill_level_range.to_dynamic,
-          "leakage_rate" => leakage_rate,
+          "leakage_rate"     => leakage_rate,
         }
       end
 
@@ -642,6 +644,7 @@ module S2
     end
 
     class FRBCOperationMode < Dry::Struct
+
       # Indicates if this FRBC.OperationMode may only be used during an abnormal condition
       attribute :abnormal_condition_only, Types::Bool
 
@@ -662,9 +665,9 @@ module S2
         d = Types::Hash[d]
         new(
           abnormal_condition_only: d.fetch("abnormal_condition_only"),
-          diagnostic_label: d["diagnostic_label"],
-          elements: d.fetch("elements").map { |x| ElementElement.from_dynamic!(x) },
-          id: d.fetch("id"),
+          diagnostic_label:        d["diagnostic_label"],
+          elements:                d.fetch("elements").map { |x| ElementElement.from_dynamic!(x) },
+          id:                      d.fetch("id"),
         )
       end
 
@@ -675,9 +678,9 @@ module S2
       def to_dynamic
         {
           "abnormal_condition_only" => abnormal_condition_only,
-          "diagnostic_label" => diagnostic_label,
-          "elements" => elements.map(&:to_dynamic),
-          "id" => id,
+          "diagnostic_label"        => diagnostic_label,
+          "elements"                => elements.map { |x| x.to_dynamic },
+          "id"                      => id,
         }
       end
 
@@ -687,6 +690,7 @@ module S2
     end
 
     class FRBCOperationModeElement < Dry::Struct
+
       # The range of the fill level for which this FRBC.OperationModeElement applies. The start
       # of the NumberRange shall be smaller than the end of the NumberRange.
       attribute :fill_level_range, FillLevelRangeClass
@@ -711,9 +715,9 @@ module S2
         d = Types::Hash[d]
         new(
           fill_level_range: FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
-          fill_rate: FillLevelRangeClass.from_dynamic!(d.fetch("fill_rate")),
-          power_ranges: d.fetch("power_ranges").map { |x| PowerRangeElement.from_dynamic!(x) },
-          running_costs: d["running_costs"] ? FillLevelRangeClass.from_dynamic!(d["running_costs"]) : nil,
+          fill_rate:        FillLevelRangeClass.from_dynamic!(d.fetch("fill_rate")),
+          power_ranges:     d.fetch("power_ranges").map { |x| PowerRangeElement.from_dynamic!(x) },
+          running_costs:    d["running_costs"] ? FillLevelRangeClass.from_dynamic!(d["running_costs"]) : nil,
         )
       end
 
@@ -724,9 +728,9 @@ module S2
       def to_dynamic
         {
           "fill_level_range" => fill_level_range.to_dynamic,
-          "fill_rate" => fill_rate.to_dynamic,
-          "power_ranges" => power_ranges.map(&:to_dynamic),
-          "running_costs" => running_costs&.to_dynamic,
+          "fill_rate"        => fill_rate.to_dynamic,
+          "power_ranges"     => power_ranges.map { |x| x.to_dynamic },
+          "running_costs"    => running_costs&.to_dynamic,
         }
       end
 
@@ -736,6 +740,7 @@ module S2
     end
 
     class FRBCStorageDescription < Dry::Struct
+
       # Human readable name/description of the storage (e.g. hot water buffer or battery). This
       # element is only intended for diagnostic purposes and not for HMI applications.
       attribute :diagnostic_label, Types::String.optional
@@ -765,12 +770,12 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          diagnostic_label: d["diagnostic_label"],
-          fill_level_label: d["fill_level_label"],
-          fill_level_range: FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
+          diagnostic_label:                   d["diagnostic_label"],
+          fill_level_label:                   d["fill_level_label"],
+          fill_level_range:                   FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
           provides_fill_level_target_profile: d.fetch("provides_fill_level_target_profile"),
-          provides_leakage_behaviour: d.fetch("provides_leakage_behaviour"),
-          provides_usage_forecast: d.fetch("provides_usage_forecast"),
+          provides_leakage_behaviour:         d.fetch("provides_leakage_behaviour"),
+          provides_usage_forecast:            d.fetch("provides_usage_forecast"),
         )
       end
 
@@ -780,12 +785,12 @@ module S2
 
       def to_dynamic
         {
-          "diagnostic_label" => diagnostic_label,
-          "fill_level_label" => fill_level_label,
-          "fill_level_range" => fill_level_range.to_dynamic,
+          "diagnostic_label"                   => diagnostic_label,
+          "fill_level_label"                   => fill_level_label,
+          "fill_level_range"                   => fill_level_range.to_dynamic,
           "provides_fill_level_target_profile" => provides_fill_level_target_profile,
-          "provides_leakage_behaviour" => provides_leakage_behaviour,
-          "provides_usage_forecast" => provides_usage_forecast,
+          "provides_leakage_behaviour"         => provides_leakage_behaviour,
+          "provides_usage_forecast"            => provides_usage_forecast,
         }
       end
 
@@ -795,6 +800,7 @@ module S2
     end
 
     class FRBCUsageForecastElement < Dry::Struct
+
       # Indicator for how long the given usage_rate is valid.
       attribute :duration, Types::Integer
 
@@ -830,14 +836,14 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          duration: d.fetch("duration"),
-          usage_rate_expected: d.fetch("usage_rate_expected"),
+          duration:                d.fetch("duration"),
+          usage_rate_expected:     d.fetch("usage_rate_expected"),
           usage_rate_lower_68_ppr: d["usage_rate_lower_68PPR"],
           usage_rate_lower_95_ppr: d["usage_rate_lower_95PPR"],
-          usage_rate_lower_limit: d["usage_rate_lower_limit"],
+          usage_rate_lower_limit:  d["usage_rate_lower_limit"],
           usage_rate_upper_68_ppr: d["usage_rate_upper_68PPR"],
           usage_rate_upper_95_ppr: d["usage_rate_upper_95PPR"],
-          usage_rate_upper_limit: d["usage_rate_upper_limit"],
+          usage_rate_upper_limit:  d["usage_rate_upper_limit"],
         )
       end
 
@@ -847,8 +853,8 @@ module S2
 
       def to_dynamic
         {
-          "duration" => duration,
-          "usage_rate_expected" => usage_rate_expected,
+          "duration"               => duration,
+          "usage_rate_expected"    => usage_rate_expected,
           "usage_rate_lower_68PPR" => usage_rate_lower_68_ppr,
           "usage_rate_lower_95PPR" => usage_rate_lower_95_ppr,
           "usage_rate_lower_limit" => usage_rate_lower_limit,
@@ -864,6 +870,7 @@ module S2
     end
 
     class NumberRange < Dry::Struct
+
       # Number that defines the end of the range
       attribute :end_of_range, Types::Double
 
@@ -873,7 +880,7 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          end_of_range: d.fetch("end_of_range"),
+          end_of_range:   d.fetch("end_of_range"),
           start_of_range: d.fetch("start_of_range"),
         )
       end
@@ -884,7 +891,7 @@ module S2
 
       def to_dynamic
         {
-          "end_of_range" => end_of_range,
+          "end_of_range"   => end_of_range,
           "start_of_range" => start_of_range,
         }
       end
@@ -895,6 +902,7 @@ module S2
     end
 
     class PowerValueElement < Dry::Struct
+
       # The power quantity the value refers to
       attribute :commodity_quantity, Types::CommodityQuantity
 
@@ -923,13 +931,13 @@ module S2
         d = Types::Hash[d]
         new(
           commodity_quantity: d.fetch("commodity_quantity"),
-          value_expected: d.fetch("value_expected"),
+          value_expected:     d.fetch("value_expected"),
           value_lower_68_ppr: d["value_lower_68PPR"],
           value_lower_95_ppr: d["value_lower_95PPR"],
-          value_lower_limit: d["value_lower_limit"],
+          value_lower_limit:  d["value_lower_limit"],
           value_upper_68_ppr: d["value_upper_68PPR"],
           value_upper_95_ppr: d["value_upper_95PPR"],
-          value_upper_limit: d["value_upper_limit"],
+          value_upper_limit:  d["value_upper_limit"],
         )
       end
 
@@ -940,13 +948,13 @@ module S2
       def to_dynamic
         {
           "commodity_quantity" => commodity_quantity,
-          "value_expected" => value_expected,
-          "value_lower_68PPR" => value_lower_68_ppr,
-          "value_lower_95PPR" => value_lower_95_ppr,
-          "value_lower_limit" => value_lower_limit,
-          "value_upper_68PPR" => value_upper_68_ppr,
-          "value_upper_95PPR" => value_upper_95_ppr,
-          "value_upper_limit" => value_upper_limit,
+          "value_expected"     => value_expected,
+          "value_lower_68PPR"  => value_lower_68_ppr,
+          "value_lower_95PPR"  => value_lower_95_ppr,
+          "value_lower_limit"  => value_lower_limit,
+          "value_upper_68PPR"  => value_upper_68_ppr,
+          "value_upper_95PPR"  => value_upper_95_ppr,
+          "value_upper_limit"  => value_upper_limit,
         }
       end
 
@@ -956,6 +964,7 @@ module S2
     end
 
     class PowerForecastElement < Dry::Struct
+
       # Duration of the PowerForecastElement
       attribute :duration, Types::Integer
 
@@ -966,7 +975,7 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          duration: d.fetch("duration"),
+          duration:     d.fetch("duration"),
           power_values: d.fetch("power_values").map { |x| PowerValueElement.from_dynamic!(x) },
         )
       end
@@ -977,8 +986,8 @@ module S2
 
       def to_dynamic
         {
-          "duration" => duration,
-          "power_values" => power_values.map(&:to_dynamic),
+          "duration"     => duration,
+          "power_values" => power_values.map { |x| x.to_dynamic },
         }
       end
 
@@ -988,6 +997,7 @@ module S2
     end
 
     class PowerForecastValue < Dry::Struct
+
       # The power quantity the value refers to
       attribute :commodity_quantity, Types::CommodityQuantity
 
@@ -1016,13 +1026,13 @@ module S2
         d = Types::Hash[d]
         new(
           commodity_quantity: d.fetch("commodity_quantity"),
-          value_expected: d.fetch("value_expected"),
+          value_expected:     d.fetch("value_expected"),
           value_lower_68_ppr: d["value_lower_68PPR"],
           value_lower_95_ppr: d["value_lower_95PPR"],
-          value_lower_limit: d["value_lower_limit"],
+          value_lower_limit:  d["value_lower_limit"],
           value_upper_68_ppr: d["value_upper_68PPR"],
           value_upper_95_ppr: d["value_upper_95PPR"],
-          value_upper_limit: d["value_upper_limit"],
+          value_upper_limit:  d["value_upper_limit"],
         )
       end
 
@@ -1033,13 +1043,13 @@ module S2
       def to_dynamic
         {
           "commodity_quantity" => commodity_quantity,
-          "value_expected" => value_expected,
-          "value_lower_68PPR" => value_lower_68_ppr,
-          "value_lower_95PPR" => value_lower_95_ppr,
-          "value_lower_limit" => value_lower_limit,
-          "value_upper_68PPR" => value_upper_68_ppr,
-          "value_upper_95PPR" => value_upper_95_ppr,
-          "value_upper_limit" => value_upper_limit,
+          "value_expected"     => value_expected,
+          "value_lower_68PPR"  => value_lower_68_ppr,
+          "value_lower_95PPR"  => value_lower_95_ppr,
+          "value_lower_limit"  => value_lower_limit,
+          "value_upper_68PPR"  => value_upper_68_ppr,
+          "value_upper_95PPR"  => value_upper_95_ppr,
+          "value_upper_limit"  => value_upper_limit,
         }
       end
 
@@ -1049,6 +1059,7 @@ module S2
     end
 
     class PowerRange < Dry::Struct
+
       # The power quantity the values refer to
       attribute :commodity_quantity, Types::CommodityQuantity
 
@@ -1062,8 +1073,8 @@ module S2
         d = Types::Hash[d]
         new(
           commodity_quantity: d.fetch("commodity_quantity"),
-          end_of_range: d.fetch("end_of_range"),
-          start_of_range: d.fetch("start_of_range"),
+          end_of_range:       d.fetch("end_of_range"),
+          start_of_range:     d.fetch("start_of_range"),
         )
       end
 
@@ -1074,8 +1085,8 @@ module S2
       def to_dynamic
         {
           "commodity_quantity" => commodity_quantity,
-          "end_of_range" => end_of_range,
-          "start_of_range" => start_of_range,
+          "end_of_range"       => end_of_range,
+          "start_of_range"     => start_of_range,
         }
       end
 
@@ -1085,6 +1096,7 @@ module S2
     end
 
     class PowerValue < Dry::Struct
+
       # The power quantity the value refers to
       attribute :commodity_quantity, Types::CommodityQuantity
 
@@ -1095,7 +1107,7 @@ module S2
         d = Types::Hash[d]
         new(
           commodity_quantity: d.fetch("commodity_quantity"),
-          value: d.fetch("value"),
+          value:              d.fetch("value"),
         )
       end
 
@@ -1106,7 +1118,7 @@ module S2
       def to_dynamic
         {
           "commodity_quantity" => commodity_quantity,
-          "value" => value,
+          "value"              => value,
         }
       end
 
@@ -1121,12 +1133,13 @@ module S2
     # ENERGY_CONSUMER: Identifier for RoleType Consumer
     # ENERGY_STORAGE: Identifier for RoleType Storage
     module RoleType
-      EnergyConsumer = "ENERGY_CONSUMER".freeze
-      EnergyProducer = "ENERGY_PRODUCER".freeze
-      EnergyStorage  = "ENERGY_STORAGE".freeze
+      EnergyConsumer = "ENERGY_CONSUMER"
+      EnergyProducer = "ENERGY_PRODUCER"
+      EnergyStorage  = "ENERGY_STORAGE"
     end
 
     class Role < Dry::Struct
+
       # Commodity the role refers to.
       attribute :commodity, Types::Commodity
 
@@ -1137,7 +1150,7 @@ module S2
         d = Types::Hash[d]
         new(
           commodity: d.fetch("commodity"),
-          role: d.fetch("role"),
+          role:      d.fetch("role"),
         )
       end
 
@@ -1148,7 +1161,7 @@ module S2
       def to_dynamic
         {
           "commodity" => commodity,
-          "role" => role,
+          "role"      => role,
         }
       end
 
@@ -1158,6 +1171,7 @@ module S2
     end
 
     class Timer < Dry::Struct
+
       # Human readable name/description of the Timer. This element is only intended for
       # diagnostic purposes and not for HMI applications.
       attribute :diagnostic_label, Types::String.optional
@@ -1173,8 +1187,8 @@ module S2
         d = Types::Hash[d]
         new(
           diagnostic_label: d["diagnostic_label"],
-          duration: d.fetch("duration"),
-          id: d.fetch("id"),
+          duration:         d.fetch("duration"),
+          id:               d.fetch("id"),
         )
       end
 
@@ -1185,8 +1199,8 @@ module S2
       def to_dynamic
         {
           "diagnostic_label" => diagnostic_label,
-          "duration" => duration,
-          "id" => id,
+          "duration"         => duration,
+          "id"               => id,
         }
       end
 
@@ -1196,6 +1210,7 @@ module S2
     end
 
     class Transition < Dry::Struct
+
       # Indicates if this Transition may only be used during an abnormal condition (see Clause )
       attribute :abnormal_condition_only, Types::Bool
 
@@ -1229,13 +1244,13 @@ module S2
         d = Types::Hash[d]
         new(
           abnormal_condition_only: d.fetch("abnormal_condition_only"),
-          blocking_timers: d.fetch("blocking_timers"),
-          from: d.fetch("from"),
-          id: d.fetch("id"),
-          start_timers: d.fetch("start_timers"),
-          to: d.fetch("to"),
-          transition_costs: d["transition_costs"],
-          transition_duration: d["transition_duration"],
+          blocking_timers:         d.fetch("blocking_timers"),
+          from:                    d.fetch("from"),
+          id:                      d.fetch("id"),
+          start_timers:            d.fetch("start_timers"),
+          to:                      d.fetch("to"),
+          transition_costs:        d["transition_costs"],
+          transition_duration:     d["transition_duration"],
         )
       end
 
@@ -1246,13 +1261,13 @@ module S2
       def to_dynamic
         {
           "abnormal_condition_only" => abnormal_condition_only,
-          "blocking_timers" => blocking_timers,
-          "from" => from,
-          "id" => id,
-          "start_timers" => start_timers,
-          "to" => to,
-          "transition_costs" => transition_costs,
-          "transition_duration" => transition_duration,
+          "blocking_timers"         => blocking_timers,
+          "from"                    => from,
+          "id"                      => id,
+          "start_timers"            => start_timers,
+          "to"                      => to,
+          "transition_costs"        => transition_costs,
+          "transition_duration"     => transition_duration,
         }
       end
 
@@ -1262,10 +1277,11 @@ module S2
     end
 
     module FRBCActuatorStatusMessageType
-      FRBCActuatorStatus = "FRBC.ActuatorStatus".freeze
+      FRBCActuatorStatus = "FRBC.ActuatorStatus"
     end
 
     class FRBCActuatorStatus < Dry::Struct
+
       # ID of the FRBC.OperationMode that is presently active.
       attribute :active_operation_mode_id, Types::String
 
@@ -1294,13 +1310,13 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          active_operation_mode_id: d.fetch("active_operation_mode_id"),
-          actuator_id: d.fetch("actuator_id"),
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
-          operation_mode_factor: d.fetch("operation_mode_factor"),
+          active_operation_mode_id:   d.fetch("active_operation_mode_id"),
+          actuator_id:                d.fetch("actuator_id"),
+          message_id:                 d.fetch("message_id"),
+          message_type:               d.fetch("message_type"),
+          operation_mode_factor:      d.fetch("operation_mode_factor"),
           previous_operation_mode_id: d["previous_operation_mode_id"],
-          transition_timestamp: d["transition_timestamp"],
+          transition_timestamp:       d["transition_timestamp"],
         )
       end
 
@@ -1310,13 +1326,13 @@ module S2
 
       def to_dynamic
         {
-          "active_operation_mode_id" => active_operation_mode_id,
-          "actuator_id" => actuator_id,
-          "message_id" => message_id,
-          "message_type" => message_type,
-          "operation_mode_factor" => operation_mode_factor,
+          "active_operation_mode_id"   => active_operation_mode_id,
+          "actuator_id"                => actuator_id,
+          "message_id"                 => message_id,
+          "message_type"               => message_type,
+          "operation_mode_factor"      => operation_mode_factor,
           "previous_operation_mode_id" => previous_operation_mode_id,
-          "transition_timestamp" => transition_timestamp,
+          "transition_timestamp"       => transition_timestamp,
         }
       end
 
@@ -1326,6 +1342,7 @@ module S2
     end
 
     class ElementClass < Dry::Struct
+
       # The duration of the element.
       attribute :duration, Types::Integer
 
@@ -1337,7 +1354,7 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          duration: d.fetch("duration"),
+          duration:         d.fetch("duration"),
           fill_level_range: FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
         )
       end
@@ -1348,7 +1365,7 @@ module S2
 
       def to_dynamic
         {
-          "duration" => duration,
+          "duration"         => duration,
           "fill_level_range" => fill_level_range.to_dynamic,
         }
       end
@@ -1359,10 +1376,11 @@ module S2
     end
 
     module FRBCFillLevelTargetProfileMessageType
-      FRBCFillLevelTargetProfile = "FRBC.FillLevelTargetProfile".freeze
+      FRBCFillLevelTargetProfile = "FRBC.FillLevelTargetProfile"
     end
 
     class FRBCFillLevelTargetProfile < Dry::Struct
+
       # List of different fill levels that have to be targeted within a given duration. There
       # shall be at least one element. Elements must be placed in chronological order.
       attribute :elements, Types.Array(ElementClass)
@@ -1378,10 +1396,10 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          elements: d.fetch("elements").map { |x| ElementClass.from_dynamic!(x) },
-          message_id: d.fetch("message_id"),
+          elements:     d.fetch("elements").map { |x| ElementClass.from_dynamic!(x) },
+          message_id:   d.fetch("message_id"),
           message_type: d.fetch("message_type"),
-          start_time: d.fetch("start_time"),
+          start_time:   d.fetch("start_time"),
         )
       end
 
@@ -1391,10 +1409,10 @@ module S2
 
       def to_dynamic
         {
-          "elements" => elements.map(&:to_dynamic),
-          "message_id" => message_id,
+          "elements"     => elements.map { |x| x.to_dynamic },
+          "message_id"   => message_id,
           "message_type" => message_type,
-          "start_time" => start_time,
+          "start_time"   => start_time,
         }
       end
 
@@ -1404,18 +1422,16 @@ module S2
     end
 
     module FRBCInstructionMessageType
-      FRBCInstruction = "FRBC.Instruction".freeze
+      FRBCInstruction = "FRBC.Instruction"
     end
 
     class FRBCInstruction < Dry::Struct
+
       # Indicates if this is an instruction during an abnormal condition.
       attribute :abnormal_condition, Types::Bool
 
       # ID of the actuator this instruction belongs to.
       attribute :actuator_id, Types::String
-
-      # The duration of the instruction (deviation from the S2 protocol).
-      attribute :duration, Types::Integer.optional
 
       # Indicates the moment the execution of the instruction shall start. When the specified
       # execution time is in the past, execution must start as soon as possible.
@@ -1440,14 +1456,13 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          abnormal_condition: d.fetch("abnormal_condition"),
-          actuator_id: d.fetch("actuator_id"),
-          duration: d["duration"],
-          execution_time: d.fetch("execution_time"),
-          id: d.fetch("id"),
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
-          operation_mode: d.fetch("operation_mode"),
+          abnormal_condition:    d.fetch("abnormal_condition"),
+          actuator_id:           d.fetch("actuator_id"),
+          execution_time:        d.fetch("execution_time"),
+          id:                    d.fetch("id"),
+          message_id:            d.fetch("message_id"),
+          message_type:          d.fetch("message_type"),
+          operation_mode:        d.fetch("operation_mode"),
           operation_mode_factor: d.fetch("operation_mode_factor"),
         )
       end
@@ -1458,14 +1473,13 @@ module S2
 
       def to_dynamic
         {
-          "abnormal_condition" => abnormal_condition,
-          "actuator_id" => actuator_id,
-          "duration" => duration,
-          "execution_time" => execution_time,
-          "id" => id,
-          "message_id" => message_id,
-          "message_type" => message_type,
-          "operation_mode" => operation_mode,
+          "abnormal_condition"    => abnormal_condition,
+          "actuator_id"           => actuator_id,
+          "execution_time"        => execution_time,
+          "id"                    => id,
+          "message_id"            => message_id,
+          "message_type"          => message_type,
+          "operation_mode"        => operation_mode,
           "operation_mode_factor" => operation_mode_factor,
         }
       end
@@ -1476,6 +1490,7 @@ module S2
     end
 
     class FRBCLeakageBehaviourElementClass < Dry::Struct
+
       # The fill level range for which this FRBC.LeakageBehaviourElement applies. The start of
       # the range must be less than the end of the range.
       attribute :fill_level_range, FillLevelRangeClass
@@ -1489,7 +1504,7 @@ module S2
         d = Types::Hash[d]
         new(
           fill_level_range: FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
-          leakage_rate: d.fetch("leakage_rate"),
+          leakage_rate:     d.fetch("leakage_rate"),
         )
       end
 
@@ -1500,7 +1515,7 @@ module S2
       def to_dynamic
         {
           "fill_level_range" => fill_level_range.to_dynamic,
-          "leakage_rate" => leakage_rate,
+          "leakage_rate"     => leakage_rate,
         }
       end
 
@@ -1510,10 +1525,11 @@ module S2
     end
 
     module FRBCLeakageBehaviourMessageType
-      FRBCLeakageBehaviour = "FRBC.LeakageBehaviour".freeze
+      FRBCLeakageBehaviour = "FRBC.LeakageBehaviour"
     end
 
     class FRBCLeakageBehaviour < Dry::Struct
+
       # List of elements that model the leakage behaviour of the buffer. The fill_level_ranges of
       # the elements must be contiguous.
       attribute :elements, Types.Array(FRBCLeakageBehaviourElementClass)
@@ -1530,10 +1546,10 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          elements: d.fetch("elements").map { |x| FRBCLeakageBehaviourElementClass.from_dynamic!(x) },
-          message_id: d.fetch("message_id"),
+          elements:     d.fetch("elements").map { |x| FRBCLeakageBehaviourElementClass.from_dynamic!(x) },
+          message_id:   d.fetch("message_id"),
           message_type: d.fetch("message_type"),
-          valid_from: d.fetch("valid_from"),
+          valid_from:   d.fetch("valid_from"),
         )
       end
 
@@ -1543,10 +1559,10 @@ module S2
 
       def to_dynamic
         {
-          "elements" => elements.map(&:to_dynamic),
-          "message_id" => message_id,
+          "elements"     => elements.map { |x| x.to_dynamic },
+          "message_id"   => message_id,
           "message_type" => message_type,
-          "valid_from" => valid_from,
+          "valid_from"   => valid_from,
         }
       end
 
@@ -1556,12 +1572,10 @@ module S2
     end
 
     module FRBCStorageStatusMessageType
-      FRBCStorageStatus = "FRBC.StorageStatus".freeze
+      FRBCStorageStatus = "FRBC.StorageStatus"
     end
 
     class FRBCStorageStatus < Dry::Struct
-      # Timestamp when StorageStatus was measured.
-      attribute :measurement_timestamp, Types::String
 
       # ID of this message
       attribute :message_id, Types::String
@@ -1574,9 +1588,8 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          measurement_timestamp: d.fetch("measurement_timestamp"),
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
+          message_id:         d.fetch("message_id"),
+          message_type:       d.fetch("message_type"),
           present_fill_level: d.fetch("present_fill_level"),
         )
       end
@@ -1587,9 +1600,8 @@ module S2
 
       def to_dynamic
         {
-          "measurement_timestamp" => measurement_timestamp,
-          "message_id" => message_id,
-          "message_type" => message_type,
+          "message_id"         => message_id,
+          "message_type"       => message_type,
           "present_fill_level" => present_fill_level,
         }
       end
@@ -1600,6 +1612,7 @@ module S2
     end
 
     class ActuatorElement < Dry::Struct
+
       # Human readable name/description for the actuator. This element is only intended for
       # diagnostic purposes and not for HMI applications.
       attribute :diagnostic_label, Types::String.optional
@@ -1623,12 +1636,12 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          diagnostic_label: d["diagnostic_label"],
-          id: d.fetch("id"),
-          operation_modes: d.fetch("operation_modes").map { |x| OperationModeElement.from_dynamic!(x) },
+          diagnostic_label:      d["diagnostic_label"],
+          id:                    d.fetch("id"),
+          operation_modes:       d.fetch("operation_modes").map { |x| OperationModeElement.from_dynamic!(x) },
           supported_commodities: d.fetch("supported_commodities"),
-          timers: d.fetch("timers").map { |x| TimerElement.from_dynamic!(x) },
-          transitions: d.fetch("transitions").map { |x| TransitionElement.from_dynamic!(x) },
+          timers:                d.fetch("timers").map { |x| TimerElement.from_dynamic!(x) },
+          transitions:           d.fetch("transitions").map { |x| TransitionElement.from_dynamic!(x) },
         )
       end
 
@@ -1638,12 +1651,12 @@ module S2
 
       def to_dynamic
         {
-          "diagnostic_label" => diagnostic_label,
-          "id" => id,
-          "operation_modes" => operation_modes.map(&:to_dynamic),
+          "diagnostic_label"      => diagnostic_label,
+          "id"                    => id,
+          "operation_modes"       => operation_modes.map { |x| x.to_dynamic },
           "supported_commodities" => supported_commodities,
-          "timers" => timers.map(&:to_dynamic),
-          "transitions" => transitions.map(&:to_dynamic),
+          "timers"                => timers.map { |x| x.to_dynamic },
+          "transitions"           => transitions.map { |x| x.to_dynamic },
         }
       end
 
@@ -1653,11 +1666,12 @@ module S2
     end
 
     module FRBCSystemDescriptionMessageType
-      FRBCSystemDescription = "FRBC.SystemDescription".freeze
+      FRBCSystemDescription = "FRBC.SystemDescription"
     end
 
     # Details of the storage.
     class StorageClass < Dry::Struct
+
       # Human readable name/description of the storage (e.g. hot water buffer or battery). This
       # element is only intended for diagnostic purposes and not for HMI applications.
       attribute :diagnostic_label, Types::String.optional
@@ -1687,12 +1701,12 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          diagnostic_label: d["diagnostic_label"],
-          fill_level_label: d["fill_level_label"],
-          fill_level_range: FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
+          diagnostic_label:                   d["diagnostic_label"],
+          fill_level_label:                   d["fill_level_label"],
+          fill_level_range:                   FillLevelRangeClass.from_dynamic!(d.fetch("fill_level_range")),
           provides_fill_level_target_profile: d.fetch("provides_fill_level_target_profile"),
-          provides_leakage_behaviour: d.fetch("provides_leakage_behaviour"),
-          provides_usage_forecast: d.fetch("provides_usage_forecast"),
+          provides_leakage_behaviour:         d.fetch("provides_leakage_behaviour"),
+          provides_usage_forecast:            d.fetch("provides_usage_forecast"),
         )
       end
 
@@ -1702,12 +1716,12 @@ module S2
 
       def to_dynamic
         {
-          "diagnostic_label" => diagnostic_label,
-          "fill_level_label" => fill_level_label,
-          "fill_level_range" => fill_level_range.to_dynamic,
+          "diagnostic_label"                   => diagnostic_label,
+          "fill_level_label"                   => fill_level_label,
+          "fill_level_range"                   => fill_level_range.to_dynamic,
           "provides_fill_level_target_profile" => provides_fill_level_target_profile,
-          "provides_leakage_behaviour" => provides_leakage_behaviour,
-          "provides_usage_forecast" => provides_usage_forecast,
+          "provides_leakage_behaviour"         => provides_leakage_behaviour,
+          "provides_usage_forecast"            => provides_usage_forecast,
         }
       end
 
@@ -1717,6 +1731,7 @@ module S2
     end
 
     class FRBCSystemDescription < Dry::Struct
+
       # Details of all Actuators.
       attribute :actuators, Types.Array(ActuatorElement)
 
@@ -1735,11 +1750,11 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          actuators: d.fetch("actuators").map { |x| ActuatorElement.from_dynamic!(x) },
-          message_id: d.fetch("message_id"),
+          actuators:    d.fetch("actuators").map { |x| ActuatorElement.from_dynamic!(x) },
+          message_id:   d.fetch("message_id"),
           message_type: d.fetch("message_type"),
-          storage: StorageClass.from_dynamic!(d.fetch("storage")),
-          valid_from: d.fetch("valid_from"),
+          storage:      StorageClass.from_dynamic!(d.fetch("storage")),
+          valid_from:   d.fetch("valid_from"),
         )
       end
 
@@ -1749,11 +1764,11 @@ module S2
 
       def to_dynamic
         {
-          "actuators" => actuators.map(&:to_dynamic),
-          "message_id" => message_id,
+          "actuators"    => actuators.map { |x| x.to_dynamic },
+          "message_id"   => message_id,
           "message_type" => message_type,
-          "storage" => storage.to_dynamic,
-          "valid_from" => valid_from,
+          "storage"      => storage.to_dynamic,
+          "valid_from"   => valid_from,
         }
       end
 
@@ -1763,10 +1778,11 @@ module S2
     end
 
     module FRBCTimerStatusMessageType
-      FRBCTimerStatus = "FRBC.TimerStatus".freeze
+      FRBCTimerStatus = "FRBC.TimerStatus"
     end
 
     class FRBCTimerStatus < Dry::Struct
+
       # The ID of the actuator the timer belongs to
       attribute :actuator_id, Types::String
 
@@ -1786,11 +1802,11 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          actuator_id: d.fetch("actuator_id"),
-          finished_at: d.fetch("finished_at"),
-          message_id: d.fetch("message_id"),
+          actuator_id:  d.fetch("actuator_id"),
+          finished_at:  d.fetch("finished_at"),
+          message_id:   d.fetch("message_id"),
           message_type: d.fetch("message_type"),
-          timer_id: d.fetch("timer_id"),
+          timer_id:     d.fetch("timer_id"),
         )
       end
 
@@ -1800,11 +1816,11 @@ module S2
 
       def to_dynamic
         {
-          "actuator_id" => actuator_id,
-          "finished_at" => finished_at,
-          "message_id" => message_id,
+          "actuator_id"  => actuator_id,
+          "finished_at"  => finished_at,
+          "message_id"   => message_id,
           "message_type" => message_type,
-          "timer_id" => timer_id,
+          "timer_id"     => timer_id,
         }
       end
 
@@ -1814,6 +1830,7 @@ module S2
     end
 
     class FRBCUsageForecastElementClass < Dry::Struct
+
       # Indicator for how long the given usage_rate is valid.
       attribute :duration, Types::Integer
 
@@ -1849,14 +1866,14 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          duration: d.fetch("duration"),
-          usage_rate_expected: d.fetch("usage_rate_expected"),
+          duration:                d.fetch("duration"),
+          usage_rate_expected:     d.fetch("usage_rate_expected"),
           usage_rate_lower_68_ppr: d["usage_rate_lower_68PPR"],
           usage_rate_lower_95_ppr: d["usage_rate_lower_95PPR"],
-          usage_rate_lower_limit: d["usage_rate_lower_limit"],
+          usage_rate_lower_limit:  d["usage_rate_lower_limit"],
           usage_rate_upper_68_ppr: d["usage_rate_upper_68PPR"],
           usage_rate_upper_95_ppr: d["usage_rate_upper_95PPR"],
-          usage_rate_upper_limit: d["usage_rate_upper_limit"],
+          usage_rate_upper_limit:  d["usage_rate_upper_limit"],
         )
       end
 
@@ -1866,8 +1883,8 @@ module S2
 
       def to_dynamic
         {
-          "duration" => duration,
-          "usage_rate_expected" => usage_rate_expected,
+          "duration"               => duration,
+          "usage_rate_expected"    => usage_rate_expected,
           "usage_rate_lower_68PPR" => usage_rate_lower_68_ppr,
           "usage_rate_lower_95PPR" => usage_rate_lower_95_ppr,
           "usage_rate_lower_limit" => usage_rate_lower_limit,
@@ -1883,10 +1900,11 @@ module S2
     end
 
     module FRBCUsageForecastMessageType
-      FRBCUsageForecast = "FRBC.UsageForecast".freeze
+      FRBCUsageForecast = "FRBC.UsageForecast"
     end
 
     class FRBCUsageForecast < Dry::Struct
+
       # Further elements that model the profile. There shall be at least one element. Elements
       # must be placed in chronological order.
       attribute :elements, Types.Array(FRBCUsageForecastElementClass)
@@ -1902,10 +1920,10 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          elements: d.fetch("elements").map { |x| FRBCUsageForecastElementClass.from_dynamic!(x) },
-          message_id: d.fetch("message_id"),
+          elements:     d.fetch("elements").map { |x| FRBCUsageForecastElementClass.from_dynamic!(x) },
+          message_id:   d.fetch("message_id"),
           message_type: d.fetch("message_type"),
-          start_time: d.fetch("start_time"),
+          start_time:   d.fetch("start_time"),
         )
       end
 
@@ -1915,10 +1933,10 @@ module S2
 
       def to_dynamic
         {
-          "elements" => elements.map(&:to_dynamic),
-          "message_id" => message_id,
+          "elements"     => elements.map { |x| x.to_dynamic },
+          "message_id"   => message_id,
           "message_type" => message_type,
-          "start_time" => start_time,
+          "start_time"   => start_time,
         }
       end
 
@@ -1928,7 +1946,7 @@ module S2
     end
 
     module HandshakeMessageType
-      Handshake = "Handshake".freeze
+      Handshake = "Handshake"
     end
 
     # CEM: Customer Energy Manager
@@ -1936,11 +1954,12 @@ module S2
     #
     # The role of the sender of this message
     module EnergyManagementRole
-      Cem = "CEM".freeze
-      Rm  = "RM".freeze
+      Cem = "CEM"
+      Rm  = "RM"
     end
 
     class Handshake < Dry::Struct
+
       # ID of this message
       attribute :message_id, Types::String
 
@@ -1956,9 +1975,9 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
-          role: d.fetch("role"),
+          message_id:                  d.fetch("message_id"),
+          message_type:                d.fetch("message_type"),
+          role:                        d.fetch("role"),
           supported_protocol_versions: d["supported_protocol_versions"],
         )
       end
@@ -1969,9 +1988,9 @@ module S2
 
       def to_dynamic
         {
-          "message_id" => message_id,
-          "message_type" => message_type,
-          "role" => role,
+          "message_id"                  => message_id,
+          "message_type"                => message_type,
+          "role"                        => role,
           "supported_protocol_versions" => supported_protocol_versions,
         }
       end
@@ -1982,10 +2001,11 @@ module S2
     end
 
     module HandshakeResponseMessageType
-      HandshakeResponse = "HandshakeResponse".freeze
+      HandshakeResponse = "HandshakeResponse"
     end
 
     class HandshakeResponse < Dry::Struct
+
       # ID of this message
       attribute :message_id, Types::String
 
@@ -1997,8 +2017,8 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
+          message_id:                d.fetch("message_id"),
+          message_type:              d.fetch("message_type"),
           selected_protocol_version: d.fetch("selected_protocol_version"),
         )
       end
@@ -2009,8 +2029,8 @@ module S2
 
       def to_dynamic
         {
-          "message_id" => message_id,
-          "message_type" => message_type,
+          "message_id"                => message_id,
+          "message_type"              => message_type,
           "selected_protocol_version" => selected_protocol_version,
         }
       end
@@ -2021,7 +2041,7 @@ module S2
     end
 
     module InstructionStatusUpdateMessageType
-      InstructionStatusUpdate = "InstructionStatusUpdate".freeze
+      InstructionStatusUpdate = "InstructionStatusUpdate"
     end
 
     # NEW: Instruction was newly created
@@ -2034,16 +2054,17 @@ module S2
     #
     # Present status of this instruction.
     module InstructionStatus
-      Aborted   = "ABORTED".freeze
-      Accepted  = "ACCEPTED".freeze
-      New       = "NEW".freeze
-      Rejected  = "REJECTED".freeze
-      Revoked   = "REVOKED".freeze
-      Started   = "STARTED".freeze
-      Succeeded = "SUCCEEDED".freeze
+      Aborted   = "ABORTED"
+      Accepted  = "ACCEPTED"
+      New       = "NEW"
+      Rejected  = "REJECTED"
+      Revoked   = "REVOKED"
+      Started   = "STARTED"
+      Succeeded = "SUCCEEDED"
     end
 
     class InstructionStatusUpdate < Dry::Struct
+
       # ID of this instruction (as provided by the CEM)
       attribute :instruction_id, Types::String
 
@@ -2062,10 +2083,10 @@ module S2
         d = Types::Hash[d]
         new(
           instruction_id: d.fetch("instruction_id"),
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
-          status_type: d.fetch("status_type"),
-          timestamp: d.fetch("timestamp"),
+          message_id:     d.fetch("message_id"),
+          message_type:   d.fetch("message_type"),
+          status_type:    d.fetch("status_type"),
+          timestamp:      d.fetch("timestamp"),
         )
       end
 
@@ -2076,10 +2097,10 @@ module S2
       def to_dynamic
         {
           "instruction_id" => instruction_id,
-          "message_id" => message_id,
-          "message_type" => message_type,
-          "status_type" => status_type,
-          "timestamp" => timestamp,
+          "message_id"     => message_id,
+          "message_type"   => message_type,
+          "status_type"    => status_type,
+          "timestamp"      => timestamp,
         }
       end
 
@@ -2089,6 +2110,7 @@ module S2
     end
 
     class PowerForecastElementClass < Dry::Struct
+
       # Duration of the PowerForecastElement
       attribute :duration, Types::Integer
 
@@ -2099,7 +2121,7 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          duration: d.fetch("duration"),
+          duration:     d.fetch("duration"),
           power_values: d.fetch("power_values").map { |x| PowerValueElement.from_dynamic!(x) },
         )
       end
@@ -2110,8 +2132,8 @@ module S2
 
       def to_dynamic
         {
-          "duration" => duration,
-          "power_values" => power_values.map(&:to_dynamic),
+          "duration"     => duration,
+          "power_values" => power_values.map { |x| x.to_dynamic },
         }
       end
 
@@ -2121,10 +2143,11 @@ module S2
     end
 
     module PowerForecastMessageType
-      PowerForecast = "PowerForecast".freeze
+      PowerForecast = "PowerForecast"
     end
 
     class PowerForecast < Dry::Struct
+
       # Elements of which this forecast consists. Contains at least one element. Elements must be
       # placed in chronological order.
       attribute :elements, Types.Array(PowerForecastElementClass)
@@ -2140,10 +2163,10 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          elements: d.fetch("elements").map { |x| PowerForecastElementClass.from_dynamic!(x) },
-          message_id: d.fetch("message_id"),
+          elements:     d.fetch("elements").map { |x| PowerForecastElementClass.from_dynamic!(x) },
+          message_id:   d.fetch("message_id"),
           message_type: d.fetch("message_type"),
-          start_time: d.fetch("start_time"),
+          start_time:   d.fetch("start_time"),
         )
       end
 
@@ -2153,10 +2176,10 @@ module S2
 
       def to_dynamic
         {
-          "elements" => elements.map(&:to_dynamic),
-          "message_id" => message_id,
+          "elements"     => elements.map { |x| x.to_dynamic },
+          "message_id"   => message_id,
           "message_type" => message_type,
-          "start_time" => start_time,
+          "start_time"   => start_time,
         }
       end
 
@@ -2166,10 +2189,11 @@ module S2
     end
 
     module PowerMeasurementMessageType
-      PowerMeasurement = "PowerMeasurement".freeze
+      PowerMeasurement = "PowerMeasurement"
     end
 
     class ValueElement < Dry::Struct
+
       # The power quantity the value refers to
       attribute :commodity_quantity, Types::CommodityQuantity
 
@@ -2180,7 +2204,7 @@ module S2
         d = Types::Hash[d]
         new(
           commodity_quantity: d.fetch("commodity_quantity"),
-          value: d.fetch("value"),
+          value:              d.fetch("value"),
         )
       end
 
@@ -2191,7 +2215,7 @@ module S2
       def to_dynamic
         {
           "commodity_quantity" => commodity_quantity,
-          "value" => value,
+          "value"              => value,
         }
       end
 
@@ -2201,6 +2225,7 @@ module S2
     end
 
     class PowerMeasurement < Dry::Struct
+
       # Timestamp when PowerValues were measured.
       attribute :measurement_timestamp, Types::String
 
@@ -2217,9 +2242,9 @@ module S2
         d = Types::Hash[d]
         new(
           measurement_timestamp: d.fetch("measurement_timestamp"),
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
-          values: d.fetch("values").map { |x| ValueElement.from_dynamic!(x) },
+          message_id:            d.fetch("message_id"),
+          message_type:          d.fetch("message_type"),
+          values:                d.fetch("values").map { |x| ValueElement.from_dynamic!(x) },
         )
       end
 
@@ -2230,9 +2255,9 @@ module S2
       def to_dynamic
         {
           "measurement_timestamp" => measurement_timestamp,
-          "message_id" => message_id,
-          "message_type" => message_type,
-          "values" => values.map(&:to_dynamic),
+          "message_id"            => message_id,
+          "message_type"          => message_type,
+          "values"                => values.map { |x| x.to_dynamic },
         }
       end
 
@@ -2242,7 +2267,7 @@ module S2
     end
 
     module ReceptionStatusMessageType
-      ReceptionStatus = "ReceptionStatus".freeze
+      ReceptionStatus = "ReceptionStatus"
     end
 
     # INVALID_DATA: Message not understood (e.g. not valid JSON, no message_id found).
@@ -2258,15 +2283,16 @@ module S2
     #
     # Enumeration of status values
     module ReceptionStatusValues
-      InvalidContent = "INVALID_CONTENT".freeze
-      InvalidData    = "INVALID_DATA".freeze
-      InvalidMessage = "INVALID_MESSAGE".freeze
-      Ok             = "OK".freeze
-      PermanentError = "PERMANENT_ERROR".freeze
-      TemporaryError = "TEMPORARY_ERROR".freeze
+      InvalidContent = "INVALID_CONTENT"
+      InvalidData    = "INVALID_DATA"
+      InvalidMessage = "INVALID_MESSAGE"
+      Ok             = "OK"
+      PermanentError = "PERMANENT_ERROR"
+      TemporaryError = "TEMPORARY_ERROR"
     end
 
     class ReceptionStatus < Dry::Struct
+
       # Diagnostic label that can be used to provide additional information for debugging.
       # However, not for HMI purposes.
       attribute :diagnostic_label, Types::String.optional
@@ -2282,9 +2308,9 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          diagnostic_label: d["diagnostic_label"],
-          message_type: d.fetch("message_type"),
-          status: d.fetch("status"),
+          diagnostic_label:   d["diagnostic_label"],
+          message_type:       d.fetch("message_type"),
+          status:             d.fetch("status"),
           subject_message_id: d.fetch("subject_message_id"),
         )
       end
@@ -2295,9 +2321,9 @@ module S2
 
       def to_dynamic
         {
-          "diagnostic_label" => diagnostic_label,
-          "message_type" => message_type,
-          "status" => status,
+          "diagnostic_label"   => diagnostic_label,
+          "message_type"       => message_type,
+          "status"             => status,
           "subject_message_id" => subject_message_id,
         }
       end
@@ -2319,13 +2345,13 @@ module S2
     # The ControlType to activate. Must be one of the available ControlTypes as defined in the
     # ResourceManagerDetails
     module ControlType
-      DemandDrivenBasedControl  = "DEMAND_DRIVEN_BASED_CONTROL".freeze
-      FillRateBasedControl      = "FILL_RATE_BASED_CONTROL".freeze
-      NoSelection               = "NO_SELECTION".freeze
-      NotControlable            = "NOT_CONTROLABLE".freeze
-      OperationModeBasedControl = "OPERATION_MODE_BASED_CONTROL".freeze
-      PowerEnvelopeBasedControl = "POWER_ENVELOPE_BASED_CONTROL".freeze
-      PowerProfileBasedControl  = "POWER_PROFILE_BASED_CONTROL".freeze
+      DemandDrivenBasedControl  = "DEMAND_DRIVEN_BASED_CONTROL"
+      FillRateBasedControl      = "FILL_RATE_BASED_CONTROL"
+      NoSelection               = "NO_SELECTION"
+      NotControlable            = "NOT_CONTROLABLE"
+      OperationModeBasedControl = "OPERATION_MODE_BASED_CONTROL"
+      PowerEnvelopeBasedControl = "POWER_ENVELOPE_BASED_CONTROL"
+      PowerProfileBasedControl  = "POWER_PROFILE_BASED_CONTROL"
     end
 
     # Currency used when this resource gives cost information
@@ -2333,113 +2359,114 @@ module S2
     # Currency to be used for all information regarding costs. Mandatory if cost information is
     # published.
     module Currency
-      Aed = "AED".freeze
-      Ang = "ANG".freeze
-      Aud = "AUD".freeze
-      Che = "CHE".freeze
-      Chf = "CHF".freeze
-      Chw = "CHW".freeze
-      Eur = "EUR".freeze
-      Gbp = "GBP".freeze
-      Lbp = "LBP".freeze
-      Lkr = "LKR".freeze
-      Lrd = "LRD".freeze
-      Lsl = "LSL".freeze
-      Lyd = "LYD".freeze
-      Mad = "MAD".freeze
-      Mdl = "MDL".freeze
-      Mga = "MGA".freeze
-      Mkd = "MKD".freeze
-      Mmk = "MMK".freeze
-      Mnt = "MNT".freeze
-      Mop = "MOP".freeze
-      Mro = "MRO".freeze
-      Mur = "MUR".freeze
-      Mvr = "MVR".freeze
-      Mwk = "MWK".freeze
-      Mxn = "MXN".freeze
-      Mxv = "MXV".freeze
-      Myr = "MYR".freeze
-      Mzn = "MZN".freeze
-      NIO = "NIO".freeze
-      Nad = "NAD".freeze
-      Ngn = "NGN".freeze
-      Nok = "NOK".freeze
-      Npr = "NPR".freeze
-      Nzd = "NZD".freeze
-      OMR = "OMR".freeze
-      PHP = "PHP".freeze
-      Pab = "PAB".freeze
-      Pen = "PEN".freeze
-      Pgk = "PGK".freeze
-      Pkr = "PKR".freeze
-      Pln = "PLN".freeze
-      Pyg = "PYG".freeze
-      Qar = "QAR".freeze
-      Ron = "RON".freeze
-      Rsd = "RSD".freeze
-      Rub = "RUB".freeze
-      Rwf = "RWF".freeze
-      SSP = "SSP".freeze
-      Sar = "SAR".freeze
-      Sbd = "SBD".freeze
-      Scr = "SCR".freeze
-      Sdg = "SDG".freeze
-      Sek = "SEK".freeze
-      Sgd = "SGD".freeze
-      Shp = "SHP".freeze
-      Sll = "SLL".freeze
-      Sos = "SOS".freeze
-      Srd = "SRD".freeze
-      Std = "STD".freeze
-      Syp = "SYP".freeze
-      Szl = "SZL".freeze
-      Thb = "THB".freeze
-      Tjs = "TJS".freeze
-      Tmt = "TMT".freeze
-      Tnd = "TND".freeze
-      Top = "TOP".freeze
-      Try = "TRY".freeze
-      Ttd = "TTD".freeze
-      Twd = "TWD".freeze
-      Tzs = "TZS".freeze
-      Uah = "UAH".freeze
-      Ugx = "UGX".freeze
-      Usd = "USD".freeze
-      Usn = "USN".freeze
-      Uyi = "UYI".freeze
-      Uyu = "UYU".freeze
-      Uzs = "UZS".freeze
-      Vef = "VEF".freeze
-      Vnd = "VND".freeze
-      Vuv = "VUV".freeze
-      Wst = "WST".freeze
-      XAG = "XAG".freeze
-      Xau = "XAU".freeze
-      Xba = "XBA".freeze
-      Xbb = "XBB".freeze
-      Xbc = "XBC".freeze
-      Xbd = "XBD".freeze
-      Xcd = "XCD".freeze
-      Xof = "XOF".freeze
-      Xpd = "XPD".freeze
-      Xpf = "XPF".freeze
-      Xpt = "XPT".freeze
-      Xsu = "XSU".freeze
-      Xts = "XTS".freeze
-      Xua = "XUA".freeze
-      Xxx = "XXX".freeze
-      Yer = "YER".freeze
-      Zar = "ZAR".freeze
-      Zmw = "ZMW".freeze
-      Zwl = "ZWL".freeze
+      Aed = "AED"
+      Ang = "ANG"
+      Aud = "AUD"
+      Che = "CHE"
+      Chf = "CHF"
+      Chw = "CHW"
+      Eur = "EUR"
+      Gbp = "GBP"
+      Lbp = "LBP"
+      Lkr = "LKR"
+      Lrd = "LRD"
+      Lsl = "LSL"
+      Lyd = "LYD"
+      Mad = "MAD"
+      Mdl = "MDL"
+      Mga = "MGA"
+      Mkd = "MKD"
+      Mmk = "MMK"
+      Mnt = "MNT"
+      Mop = "MOP"
+      Mro = "MRO"
+      Mur = "MUR"
+      Mvr = "MVR"
+      Mwk = "MWK"
+      Mxn = "MXN"
+      Mxv = "MXV"
+      Myr = "MYR"
+      Mzn = "MZN"
+      NIO = "NIO"
+      Nad = "NAD"
+      Ngn = "NGN"
+      Nok = "NOK"
+      Npr = "NPR"
+      Nzd = "NZD"
+      OMR = "OMR"
+      PHP = "PHP"
+      Pab = "PAB"
+      Pen = "PEN"
+      Pgk = "PGK"
+      Pkr = "PKR"
+      Pln = "PLN"
+      Pyg = "PYG"
+      Qar = "QAR"
+      Ron = "RON"
+      Rsd = "RSD"
+      Rub = "RUB"
+      Rwf = "RWF"
+      SSP = "SSP"
+      Sar = "SAR"
+      Sbd = "SBD"
+      Scr = "SCR"
+      Sdg = "SDG"
+      Sek = "SEK"
+      Sgd = "SGD"
+      Shp = "SHP"
+      Sll = "SLL"
+      Sos = "SOS"
+      Srd = "SRD"
+      Std = "STD"
+      Syp = "SYP"
+      Szl = "SZL"
+      Thb = "THB"
+      Tjs = "TJS"
+      Tmt = "TMT"
+      Tnd = "TND"
+      Top = "TOP"
+      Try = "TRY"
+      Ttd = "TTD"
+      Twd = "TWD"
+      Tzs = "TZS"
+      Uah = "UAH"
+      Ugx = "UGX"
+      Usd = "USD"
+      Usn = "USN"
+      Uyi = "UYI"
+      Uyu = "UYU"
+      Uzs = "UZS"
+      Vef = "VEF"
+      Vnd = "VND"
+      Vuv = "VUV"
+      Wst = "WST"
+      XAG = "XAG"
+      Xau = "XAU"
+      Xba = "XBA"
+      Xbb = "XBB"
+      Xbc = "XBC"
+      Xbd = "XBD"
+      Xcd = "XCD"
+      Xof = "XOF"
+      Xpd = "XPD"
+      Xpf = "XPF"
+      Xpt = "XPT"
+      Xsu = "XSU"
+      Xts = "XTS"
+      Xua = "XUA"
+      Xxx = "XXX"
+      Yer = "YER"
+      Zar = "ZAR"
+      Zmw = "ZMW"
+      Zwl = "ZWL"
     end
 
     module ResourceManagerDetailsMessageType
-      ResourceManagerDetails = "ResourceManagerDetails".freeze
+      ResourceManagerDetails = "ResourceManagerDetails"
     end
 
     class RoleElement < Dry::Struct
+
       # Commodity the role refers to.
       attribute :commodity, Types::Commodity
 
@@ -2450,7 +2477,7 @@ module S2
         d = Types::Hash[d]
         new(
           commodity: d.fetch("commodity"),
-          role: d.fetch("role"),
+          role:      d.fetch("role"),
         )
       end
 
@@ -2461,7 +2488,7 @@ module S2
       def to_dynamic
         {
           "commodity" => commodity,
-          "role" => role,
+          "role"      => role,
         }
       end
 
@@ -2471,6 +2498,7 @@ module S2
     end
 
     class ResourceManagerDetails < Dry::Struct
+
       # The control types supported by this Resource Manager.
       attribute :available_control_types, Types.Array(Types::ControlType)
 
@@ -2517,20 +2545,20 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          available_control_types: d.fetch("available_control_types"),
-          currency: d["currency"],
-          firmware_version: d["firmware_version"],
-          instruction_processing_delay: d.fetch("instruction_processing_delay"),
-          manufacturer: d["manufacturer"],
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
-          model: d["model"],
-          resource_manager_details_name: d["name"],
-          provides_forecast: d.fetch("provides_forecast"),
+          available_control_types:          d.fetch("available_control_types"),
+          currency:                         d["currency"],
+          firmware_version:                 d["firmware_version"],
+          instruction_processing_delay:     d.fetch("instruction_processing_delay"),
+          manufacturer:                     d["manufacturer"],
+          message_id:                       d.fetch("message_id"),
+          message_type:                     d.fetch("message_type"),
+          model:                            d["model"],
+          resource_manager_details_name:    d["name"],
+          provides_forecast:                d.fetch("provides_forecast"),
           provides_power_measurement_types: d.fetch("provides_power_measurement_types"),
-          resource_id: d.fetch("resource_id"),
-          roles: d.fetch("roles").map { |x| RoleElement.from_dynamic!(x) },
-          serial_number: d["serial_number"],
+          resource_id:                      d.fetch("resource_id"),
+          roles:                            d.fetch("roles").map { |x| RoleElement.from_dynamic!(x) },
+          serial_number:                    d["serial_number"],
         )
       end
 
@@ -2540,20 +2568,20 @@ module S2
 
       def to_dynamic
         {
-          "available_control_types" => available_control_types,
-          "currency" => currency,
-          "firmware_version" => firmware_version,
-          "instruction_processing_delay" => instruction_processing_delay,
-          "manufacturer" => manufacturer,
-          "message_id" => message_id,
-          "message_type" => message_type,
-          "model" => model,
-          "name" => resource_manager_details_name,
-          "provides_forecast" => provides_forecast,
+          "available_control_types"          => available_control_types,
+          "currency"                         => currency,
+          "firmware_version"                 => firmware_version,
+          "instruction_processing_delay"     => instruction_processing_delay,
+          "manufacturer"                     => manufacturer,
+          "message_id"                       => message_id,
+          "message_type"                     => message_type,
+          "model"                            => model,
+          "name"                             => resource_manager_details_name,
+          "provides_forecast"                => provides_forecast,
           "provides_power_measurement_types" => provides_power_measurement_types,
-          "resource_id" => resource_id,
-          "roles" => roles.map(&:to_dynamic),
-          "serial_number" => serial_number,
+          "resource_id"                      => resource_id,
+          "roles"                            => roles.map { |x| x.to_dynamic },
+          "serial_number"                    => serial_number,
         }
       end
 
@@ -2563,7 +2591,7 @@ module S2
     end
 
     module RevokeObjectMessageType
-      RevokeObject = "RevokeObject".freeze
+      RevokeObject = "RevokeObject"
     end
 
     # PEBC.PowerConstraints: Object type PEBC.PowerConstraints
@@ -2582,22 +2610,23 @@ module S2
     #
     # The type of object that needs to be revoked
     module RevokableObjects
-      DDBCInstruction                  = "DDBC.Instruction".freeze
-      DDBCSystemDescription            = "DDBC.SystemDescription".freeze
-      FRBCInstruction                  = "FRBC.Instruction".freeze
-      FRBCSystemDescription            = "FRBC.SystemDescription".freeze
-      OMBCInstruction                  = "OMBC.Instruction".freeze
-      OMBCSystemDescription            = "OMBC.SystemDescription".freeze
-      PEBCEnergyConstraint             = "PEBC.EnergyConstraint".freeze
-      PEBCInstruction                  = "PEBC.Instruction".freeze
-      PEBCPowerConstraints             = "PEBC.PowerConstraints".freeze
-      PPBCEndInterruptionInstruction   = "PPBC.EndInterruptionInstruction".freeze
-      PPBCPowerProfileDefinition       = "PPBC.PowerProfileDefinition".freeze
-      PPBCScheduleInstruction          = "PPBC.ScheduleInstruction".freeze
-      PPBCStartInterruptionInstruction = "PPBC.StartInterruptionInstruction".freeze
+      DDBCInstruction                  = "DDBC.Instruction"
+      DDBCSystemDescription            = "DDBC.SystemDescription"
+      FRBCInstruction                  = "FRBC.Instruction"
+      FRBCSystemDescription            = "FRBC.SystemDescription"
+      OMBCInstruction                  = "OMBC.Instruction"
+      OMBCSystemDescription            = "OMBC.SystemDescription"
+      PEBCEnergyConstraint             = "PEBC.EnergyConstraint"
+      PEBCInstruction                  = "PEBC.Instruction"
+      PEBCPowerConstraints             = "PEBC.PowerConstraints"
+      PPBCEndInterruptionInstruction   = "PPBC.EndInterruptionInstruction"
+      PPBCPowerProfileDefinition       = "PPBC.PowerProfileDefinition"
+      PPBCScheduleInstruction          = "PPBC.ScheduleInstruction"
+      PPBCStartInterruptionInstruction = "PPBC.StartInterruptionInstruction"
     end
 
     class RevokeObject < Dry::Struct
+
       # ID of this message
       attribute :message_id, Types::String
 
@@ -2612,10 +2641,10 @@ module S2
       def self.from_dynamic!(d)
         d = Types::Hash[d]
         new(
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
+          message_id:              d.fetch("message_id"),
+          message_type:            d.fetch("message_type"),
           revoke_object_object_id: d.fetch("object_id"),
-          object_type: d.fetch("object_type"),
+          object_type:             d.fetch("object_type"),
         )
       end
 
@@ -2625,10 +2654,10 @@ module S2
 
       def to_dynamic
         {
-          "message_id" => message_id,
+          "message_id"   => message_id,
           "message_type" => message_type,
-          "object_id" => revoke_object_object_id,
-          "object_type" => object_type,
+          "object_id"    => revoke_object_object_id,
+          "object_type"  => object_type,
         }
       end
 
@@ -2638,10 +2667,11 @@ module S2
     end
 
     module SelectControlTypeMessageType
-      SelectControlType = "SelectControlType".freeze
+      SelectControlType = "SelectControlType"
     end
 
     class SelectControlType < Dry::Struct
+
       # The ControlType to activate. Must be one of the available ControlTypes as defined in the
       # ResourceManagerDetails
       attribute :control_type, Types::ControlType
@@ -2655,7 +2685,7 @@ module S2
         d = Types::Hash[d]
         new(
           control_type: d.fetch("control_type"),
-          message_id: d.fetch("message_id"),
+          message_id:   d.fetch("message_id"),
           message_type: d.fetch("message_type"),
         )
       end
@@ -2667,7 +2697,7 @@ module S2
       def to_dynamic
         {
           "control_type" => control_type,
-          "message_id" => message_id,
+          "message_id"   => message_id,
           "message_type" => message_type,
         }
       end
@@ -2678,7 +2708,7 @@ module S2
     end
 
     module SessionRequestMessageType
-      SessionRequest = "SessionRequest".freeze
+      SessionRequest = "SessionRequest"
     end
 
     # RECONNECT: Please reconnect the WebSocket session. Once reconnected, it starts from
@@ -2688,11 +2718,12 @@ module S2
     #
     # The type of request
     module SessionRequestType
-      Reconnect = "RECONNECT".freeze
-      Terminate = "TERMINATE".freeze
+      Reconnect = "RECONNECT"
+      Terminate = "TERMINATE"
     end
 
     class SessionRequest < Dry::Struct
+
       # Optional field for a human readible descirption for debugging purposes
       attribute :diagnostic_label, Types::String.optional
 
@@ -2708,9 +2739,9 @@ module S2
         d = Types::Hash[d]
         new(
           diagnostic_label: d["diagnostic_label"],
-          message_id: d.fetch("message_id"),
-          message_type: d.fetch("message_type"),
-          request: d.fetch("request"),
+          message_id:       d.fetch("message_id"),
+          message_type:     d.fetch("message_type"),
+          request:          d.fetch("request"),
         )
       end
 
@@ -2721,9 +2752,9 @@ module S2
       def to_dynamic
         {
           "diagnostic_label" => diagnostic_label,
-          "message_id" => message_id,
-          "message_type" => message_type,
-          "request" => request,
+          "message_id"       => message_id,
+          "message_type"     => message_type,
+          "request"          => request,
         }
       end
 
